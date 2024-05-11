@@ -7,7 +7,7 @@ void fetch(MIPS32Simulator * sim);
 
 void decode(MIPS32Simulator * sim);
 
-void execution();
+void execute();
 
 void memory();
 

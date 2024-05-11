@@ -16,12 +16,13 @@ void print_pipeline_register(MIPS32Simulator * sim)
     printf("║                    ║        ALU_SRC=[%d] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUSrc);
     printf("║                    ║        ALU_OP=[%02b] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUOp);
     printf("╠════════════════════╬════════════════════╬════════════════════╬════════════════════╣\n");
-    // printf("║     NPC=[%08X] ║     NPC=[%08X] ║  BR_TGT=[%08X] ║                    ║\n", );
-    // printf("║                    ║       A=[%08X] ║    ZERO=[%08X] ║     LMD=[%08X] ║\n", );
-    // printf("║      IR=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║                    ║\n", );
-    // printf("║                    ║      RT=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║\n", );
-    // printf("║                    ║      RD=[%08X] ║      RD=[%08X] ║      RD=[%08X] ║\n", );
-    // printf("║                    ║     IMM=[%08X] ║                    ║                    ║\n", );
+    printf("║     NPC=[%08X] ║     NPC=[%08X] ║  BR_TGT=[%08X] ║                    ║\n", sim->if_id_reg.pc, sim->id_ex_reg.pc, sim->ex_mem_reg.br_trgt);
+    printf("║                    ║       A=[%08X] ║    ZERO=[%08X] ║     LMD=[%08X] ║\n", sim->id_ex_reg.rs_val, sim->ex_mem_reg.zero, sim->mem_wb_reg.load_data);
+    printf("║      IR=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║                    ║\n",  sim->if_id_reg.instruction, sim->id_ex_reg.rt_val, sim->ex_mem_reg.ALU_result);
+    printf("║                    ║      RT=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║\n", sim->id_ex_reg.rt_num, sim->ex_mem_reg.ALU_result, sim->mem_wb_reg.ALU_result);
+    printf("║                    ║      RD=[%08X] ║      RD=[%08X] ║      RD=[%08X] ║\n", sim->id_ex_reg.rd_num, sim->ex_mem_reg.rd_num, sim->mem_wb_reg.rd_num);
+    printf("║                    ║     IMM=[%08X] ║                    ║                    ║\n", sim->id_ex_reg.imm_val);
+    printf("╚════════════════════╩════════════════════╩════════════════════╩════════════════════╝\n");
 }
 
 void print_reg_file(MIPS32Simulator * sim)

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "control_register.h"
 #include "pipeline_register.h"
 
