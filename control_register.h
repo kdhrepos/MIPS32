@@ -6,7 +6,7 @@
 #define DONT_CARE -1
 
 typedef struct {
-    // EXE
+    // EX
 	int ALUSrc, ALUOp, RegDst;
     // MEM
     int MemRead, MemWrite, Branch, Jump;

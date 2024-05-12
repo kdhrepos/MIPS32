@@ -12,3 +12,7 @@ void execute();
 void memory();
 
 void write_back();
+
+int ALU_control_input(int ALUOp, int funct);
+
+bool is_noop(MIPS32Simulator * sim);

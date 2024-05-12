@@ -20,7 +20,7 @@ typedef struct {
 }ID_EX_REG;
 
 typedef struct {
-    int br_trgt;
+    int br_tgt;
     int zero;
     int ALU_result;
     int rt_val;
