@@ -1,17 +1,17 @@
 #pragma once
 
-#include "core.h"
-#include "instruction_set.h"
+#include "../core.h"
+#include "../instruction_set.h"
 
 void fetch(MIPS32Simulator * sim);
 
 void decode(MIPS32Simulator * sim);
 
-void execute();
+void execute(MIPS32Simulator * sim);
 
-void memory();
+void memory(MIPS32Simulator * sim);
 
-void write_back();
+void write_back(MIPS32Simulator * sim);
 
 int ALU_control_input(int ALUOp, int funct);
 

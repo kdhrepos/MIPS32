@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "core.h"
-#include "stages.h"
+#include "./stages/stages.h"
 #include "print.c"
 
 /*
@@ -48,7 +48,7 @@ void init_simulator(MIPS32Simulator * sim)
 
 void run_simulator(MIPS32Simulator * sim, int program[], int program_size)
 {
-    for(int i = 0; i<9; i++)
+    for(int i = 0; i<5; i++)
     {
         /* parallel execution */
         write_back(sim);
@@ -83,6 +83,8 @@ int main()
         0x01285020,   // $t2 = $t0 + $t1
     };
 
+    // int program [] = {
+    // };
 
     init_simulator(&sim);
     load_program(&sim, program, sizeof(program) / sizeof(int));
