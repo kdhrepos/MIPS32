@@ -18,6 +18,34 @@ void decode(MIPS32Simulator * sim)
     int inst = sim->if_id_reg.instruction; // instruction
     int pc = sim->if_id_reg.pc; // pc
 
+    /* no operation? */
+    if(inst == 0x00000000)
+    {
+        /* set exe stage control signals */
+        sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt in r-type
+        sim->id_ex_ctrl.ALUOp = OFF; // ALUOp
+        sim->id_ex_ctrl.RegDst = OFF; // RegDst, destination register is rd in r-type
+
+        /* set mem stage control signals */
+        sim->id_ex_ctrl.MemRead = OFF; // MemRead, don't read memory on r-type
+        sim->id_ex_ctrl.MemWrite = OFF; // MemWrite, dont' write memory on r-type
+        sim->id_ex_ctrl.Branch = OFF; // Branch, don't use branch on r-type
+        sim->id_ex_ctrl.Jump = OFF; // Jump
+
+        /* set wb stage control signals */
+        sim->id_ex_ctrl.RegWrite = OFF; // RegWrite, write result to register, not memory
+        sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't read memory on r-type
+
+        /* update pipeline register */
+        sim->id_ex_reg.rs_val = EMPTY;
+        sim->id_ex_reg.rt_val = EMPTY;
+        sim->id_ex_reg.rt_num = EMPTY;
+        sim->id_ex_reg.rd_num = EMPTY;
+        sim->id_ex_reg.imm_val = EMPTY; // don't use immediate field
+        sim->id_ex_reg.pc = pc;
+        return;
+    }
+
     /* parsing instruction */
     int opcode = (inst >> 26) & 0x3F; // opcode
     int rs = (inst >> 21) & 0x1F; // first source register
@@ -35,10 +63,11 @@ void decode(MIPS32Simulator * sim)
 
         int rs_val = sim->reg_file[rs]; // read rs from register file
         int rt_val = sim->reg_file[rt]; // read rt from register file
+        printf("R-Type Value : rs : %d, rt : %d\n\n",rs_val, rt_val);
 
         /* set exe stage control signals */
         sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt in r-type
-        sim->id_ex_ctrl.ALUOp = 0x2; // ALUOp, b'10
+        sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp
         sim->id_ex_ctrl.RegDst = ON; // RegDst, destination register is rd in r-type
 
         /* set mem stage control signals */
@@ -56,7 +85,7 @@ void decode(MIPS32Simulator * sim)
         sim->id_ex_reg.rt_val = rt_val;
         sim->id_ex_reg.rt_num = rt;
         sim->id_ex_reg.rd_num = rd;
-        sim->id_ex_reg.imm_val = EMPTY; // don't use immediate field
+        sim->id_ex_reg.imm_val = funct;
         sim->id_ex_reg.pc = pc;
     }
     else
@@ -74,7 +103,7 @@ void decode(MIPS32Simulator * sim)
             {
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt on branch
-                sim->id_ex_ctrl.ALUOp = 0x1; // ALUOp. b'01
+                sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp. b'01
                 sim->id_ex_ctrl.RegDst = DONT_CARE; // RegDst, don't care
 
                 /* set mem stage control signals */
@@ -101,7 +130,7 @@ void decode(MIPS32Simulator * sim)
             {
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = ON; // ALUSrc
-                sim->id_ex_ctrl.ALUOp = 0x0; // ALUOp, b'00
+                sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'00
                 sim->id_ex_ctrl.RegDst = DONT_CARE; // RegDst, don't care
 
                 /* set mem stage control signals */
@@ -127,7 +156,7 @@ void decode(MIPS32Simulator * sim)
             {
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = ON; // ALUSrc
-                sim->id_ex_ctrl.ALUOp = 0x0; // ALUOp, b'00
+                sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'00
                 sim->id_ex_ctrl.RegDst = OFF; // RegDst, don't use rd on load word
 
                 /* set mem stage control signals */
@@ -153,7 +182,7 @@ void decode(MIPS32Simulator * sim)
             {
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = ON; // ALUSrc, source register is rt on branch
-                sim->id_ex_ctrl.ALUOp = 0x11; // ALUOp, b'??
+                sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'??
                 sim->id_ex_ctrl.RegDst = OFF; // RegDst, don't use rd on constant operation
 
                 /* set mem stage control signals */
@@ -182,7 +211,7 @@ void decode(MIPS32Simulator * sim)
 
             /* set exe stage control signals */
             sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt on branch
-            sim->id_ex_ctrl.ALUOp = (opcode >> 4) & 0x3; // ALUOp
+            sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'??
             sim->id_ex_ctrl.RegDst = OFF; // RegDst, don't use rd on constant operation
 
             /* set mem stage control signals */
@@ -203,5 +232,38 @@ void decode(MIPS32Simulator * sim)
             sim->id_ex_reg.imm_val = addr;
             sim->id_ex_reg.pc = pc;
         }
+    }
+}
+
+int get_ALUOp(int opcode)
+{
+    /* RTYPEOP */
+    if(opcode == RTYPEOP)
+        return 0x7; // b'111
+    else
+    {
+        /* ITYPEOP */
+        if(opcode != J && opcode != JAL)
+        {
+            if(opcode == ADDI || opcode == ADDIU
+            || opcode == LW || opcode == LBU || opcode == LHU 
+            || opcode == SH || opcode == SW || opcode == SB)
+                return 0x0; // b'000
+            if(opcode == BEQ)
+                return 0x1; // b'001
+            if(opcode == BNE)
+                return 0x2; // b'010
+            if(opcode == SLTI || opcode == SLTIU)
+                return 0x3; // b'011
+            if(opcode == ANDI)
+                return 0x4; // b'100
+            if(opcode == ORI)
+                return 0x5; // b'101
+            if(opcode == LUI)
+                return 0x6; // b'110
+        }
+        /* JTYPEOP */
+        else
+            return 0x0; // b'000, don't use ALU
     }
 }

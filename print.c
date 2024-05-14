@@ -14,7 +14,7 @@ void print_pipeline_register(MIPS32Simulator * sim)
     printf("║                    ║      MEM_WRITE=[%d] ║      MEM_WRITE=[%d] ║                    ║\n", sim->id_ex_ctrl.MemWrite);
     printf("║                    ║        REG_DST=[%d] ║                    ║                    ║\n", sim->id_ex_ctrl.RegDst);
     printf("║                    ║        ALU_SRC=[%d] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUSrc);
-    printf("║                    ║        ALU_OP=[%02b] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUOp);
+    printf("║                    ║       ALU_OP=[%03b] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUOp);
     printf("╠════════════════════╬═══════════[PIPELINE REGISTERS]══════════╬════════════════════╣\n");
     printf("║     NPC=[%08X] ║     NPC=[%08X] ║  BR_TGT=[%08X] ║                    ║\n", sim->if_id_reg.pc, sim->id_ex_reg.pc, sim->ex_mem_reg.br_tgt);
     printf("║                    ║       A=[%08X] ║    ZERO=[%08X] ║     LMD=[%08X] ║\n", sim->id_ex_reg.rs_val, sim->ex_mem_reg.zero, sim->mem_wb_reg.load_data);

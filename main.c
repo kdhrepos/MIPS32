@@ -48,7 +48,7 @@ void init_simulator(MIPS32Simulator * sim)
 
 void run_simulator(MIPS32Simulator * sim, int program[], int program_size)
 {
-    for(int i = 0; i<5; i++)
+    for(int i = 0; i<11; i++)
     {
         /* parallel execution */
         write_back(sim);
@@ -80,11 +80,10 @@ int main()
         0x20090001,     // $t1 = 1
         0x200C0003,     // $t3 = 3
         0x200D0004,     // $t4 = 4
+        0x00000000,
+        0x00000000,
         0x01285020,   // $t2 = $t0 + $t1
     };
-
-    // int program [] = {
-    // };
 
     init_simulator(&sim);
     load_program(&sim, program, sizeof(program) / sizeof(int));

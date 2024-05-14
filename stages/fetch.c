@@ -23,9 +23,12 @@ void fetch(MIPS32Simulator * sim)
     /* if branch is not taken */
     else
         inst = sim->memory[sim->pc];
+
+    /* no operation? */
+    if(inst != 0x00000000)
+        sim->if_id_reg.pc = sim->pc+1; // update pc 
+        sim->pc += 1; // next pc
     
     /* update pipeline register */
     sim->if_id_reg.instruction = inst; 
-    sim->if_id_reg.pc = sim->pc+1; // update pc 
-    sim->pc += 1; // next pc
 }

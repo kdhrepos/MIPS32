@@ -21,6 +21,7 @@ void execute(MIPS32Simulator * sim)
     /* read id/ex pipeline register */
     int rs_val = sim->id_ex_reg.rs_val;
     int rt_val = sim->id_ex_reg.rt_val;
+
     int rt_num = sim->id_ex_reg.rt_num;
     int rd_num = sim->id_ex_reg.rd_num;
     int imm_val = sim->id_ex_reg.imm_val;
@@ -32,35 +33,42 @@ void execute(MIPS32Simulator * sim)
     int ALUOp = sim->id_ex_ctrl.ALUOp;
     int ALUSrc = sim->id_ex_ctrl.ALUSrc;
     int RegDst = sim->id_ex_ctrl.RegDst;
-    
-    /* generate ALU control input */
-    int ALU_ctrl_input = ALU_control_input(ALUOp, funct);
+
+    /* ALU inputs */
+    int ALU_ctrl_input = get_ALU_ctrl(ALUOp, funct);
+    int ALU_operand_1 = rs_val;
+    int ALU_operand_2 = ALUSrc ? imm_val : rt_val;
     int ALU_result;
 
-    /* R-Type */
-    if(ALUOp == 0x2) // b'10
+    if(ALUOp == 0x7)
     {
-        if(ALU_ctrl_input == 0x2) /* add, b'0010 */
-            ALU_result = rs_val + rt_val;
-        else if(ALU_ctrl_input == 0x6) /* subtract, b'0110 */
-            ALU_result = rs_val - rt_val;
-        else if(ALU_ctrl_input == 0x0) /* AND, b'0000 */
-            ALU_result = rs_val & rt_val;
-        else if(ALU_ctrl_input == 0x1) /* OR, b'0001 */
-            ALU_result = rs_val | rt_val;
-        else if(ALU_ctrl_input == 0x7) /* set on less than, b'0111 */
-            ALU_result = rs_val - rt_val;
+        printf("funct : %d\n",funct);
+        printf("R-Type Value : rs : %d, rt : %d, ALUOp : %b\n\n",rs_val, rt_val, ALU_ctrl_input);
     }
-    /* I-Type */
-    else
-    {
-        /* Load Word, Store Word */
-        if(ALUOp == 0x0) /* b'00 */
-            ALU_result = rs_val + imm_val;
-        /* Branch Equal */
-        else if(ALUOp == 0x1) /* b'01 */
-            ALU_result = rs_val - rt_val;
-    }
+
+    if(ALU_ctrl_input == 0x0) // and, b'0000
+        ALU_result = ALU_operand_1 & ALU_operand_2;
+    else if(ALU_ctrl_input == 0x1) // or, b'0001
+        ALU_result = ALU_operand_1 | ALU_operand_2;
+    else if(ALU_ctrl_input == 0x2) // nor, b'0010
+        ALU_result = !(ALU_operand_1 | ALU_operand_2);
+    else if(ALU_ctrl_input == 0x3) // add, b'0011
+        ALU_result = ALU_operand_1 + ALU_operand_2;
+    else if(ALU_ctrl_input == 0x4) // sub, b'0100
+        ALU_result = ALU_operand_1 - ALU_operand_2;
+    else if(ALU_ctrl_input == 0x5) // ~sub, b'0101
+        ALU_result = !(ALU_operand_1 - ALU_operand_2);
+    else if(ALU_ctrl_input == 0x6) // set on less than, b'0110
+        ALU_result = (ALU_operand_1 < ALU_operand_2) ? ON : OFF;
+    else if(ALU_ctrl_input == 0x7) // shift left, b'0111
+        ALU_result = ALU_operand_1 << shamt;
+    else if(ALU_ctrl_input == 0x8) // shift right, b'1000
+        ALU_result = (int)((unsigned int)ALU_operand_1 >> shamt);
+    else if(ALU_ctrl_input == 0x9) // arithmetic shift right, b'1001
+        ALU_result = ALU_operand_1 >> shamt;
+    else if(ALU_ctrl_input == 0xA) // shift -> or, b'1010
+        ALU_result = ALU_operand_1 & ALU_operand_2;
+
 
     /* update EX/MEM register */
     sim->ex_mem_reg.br_tgt = pc + (imm_val << 2);
@@ -78,4 +86,52 @@ void execute(MIPS32Simulator * sim)
     // MEM
     sim->ex_mem_ctrl.RegWrite  = sim->id_ex_ctrl.RegWrite;
     sim->ex_mem_ctrl.MemtoReg  = sim->id_ex_ctrl.MemtoReg;
+}
+
+int get_ALU_ctrl(int ALUOp, int funct)
+{
+    /* RTYPEOP */
+    if(ALUOp == 0x7) // b'111
+    {
+        printf("RTYPEOP ALU CTRL : %d, funct : %d\n",ALUOp, funct);
+        /* add addu */
+        if(funct == ADD || funct == ADDU)
+            return 0x3; // add, b'0011
+        /* sub subu */
+        else if(funct == SUB || funct == SUBU)
+            return 0x4; // sub, b'0100
+        /* and */
+        else if(funct == AND)
+            return 0x0; // and, b'0000
+        /* or */
+        else if(funct == OR)
+            return 0x1; // or, b'0001
+        /* nor */
+        else if(funct == NOR)
+            return 0x2; // nor, b'0010
+    }
+    /* addi addiu memory operation, b'000 */
+    else if(ALUOp == 0x0)
+        return 0x3; // add, b'0011
+    /* beq, b'001 */
+    else if(ALUOp == 0x1) 
+        return 0x4; // sub, b'0100
+    /* bne, b'010 */
+    else if(ALUOp == 0x2)
+        return 0x5; // ~sub, b'0101
+    /* slti sltiu, b'011 */
+    else if(ALUOp == 0x3)
+        return 0x6; // slt, b'0110
+    /* andi, b'100 */
+    else if(ALUOp == 0x4)
+        return 0x0; // and, b'0000
+    /* ori, b'101 */
+    else if(ALUOp == 0x5)
+        return 0x1; // or, b'0001
+    /* lui, b'110 */
+    else if(ALUOp == 0x6)
+        return 0xA; // shift -> or, b'1010
+    /* JTYPEOP */
+    else
+        return 0x0; // noop, b'0000
 }
