@@ -4,7 +4,7 @@
 #include "../instruction_set.h"
 #include "../util/history.h"
 
-void fetch(MIPS32Simulator * sim, History history[MEM_SIZE]);
+void fetch(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr);
 
 void decode(MIPS32Simulator * sim, History history[MEM_SIZE]);
 int get_ALUOp(int opcode);

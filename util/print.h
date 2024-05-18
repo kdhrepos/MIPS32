@@ -7,4 +7,4 @@ void print_pipeline_register(MIPS32Simulator * sim);
 
 void print_reg_file(MIPS32Simulator * sim);
 
-void print_history(MIPS32Simulator * sim, History history[MEM_SIZE]);
+void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr);

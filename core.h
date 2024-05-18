@@ -37,9 +37,9 @@ typedef struct {
 	EX_MEM_CTRL ex_mem_ctrl; /* control signals on ex/mem pipeline register */
 	MEM_WB_CTRL mem_wb_ctrl; /* control signals on mem/wb pipeline register */
 
-	/* pc for each of the instructions to record history  */
-	int ID_pc;
-	int EXE_pc;
-	int MEM_pc;
-	int WB_pc;
+	/* iterator for recording execution history  */
+	int ID_hist_itr;
+	int EXE_hist_itr;
+	int MEM_hist_itr;
+	int WB_hist_itr;
 } MIPS32Simulator;

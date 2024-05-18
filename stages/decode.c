@@ -22,19 +22,14 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
     if(inst == 0x00000000)
     {
         /* set exe stage control signals */
-        sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt in r-type
-        sim->id_ex_ctrl.ALUOp = OFF; // ALUOp
-        sim->id_ex_ctrl.RegDst = OFF; // RegDst, destination register is rd in r-type
+        sim->id_ex_ctrl.ALUSrc = OFF, sim->id_ex_ctrl.ALUOp = OFF, sim->id_ex_ctrl.RegDst = OFF;
 
         /* set mem stage control signals */
-        sim->id_ex_ctrl.MemRead = OFF; // MemRead, don't read memory on r-type
-        sim->id_ex_ctrl.MemWrite = OFF; // MemWrite, dont' write memory on r-type
-        sim->id_ex_ctrl.Branch = OFF; // Branch, don't use branch on r-type
-        sim->id_ex_ctrl.Jump = OFF; // Jump
+        sim->id_ex_ctrl.MemRead = OFF, sim->id_ex_ctrl.MemWrite = OFF;
+        sim->id_ex_ctrl.Branch = OFF, sim->id_ex_ctrl.Jump = OFF;
 
         /* set wb stage control signals */
-        sim->id_ex_ctrl.RegWrite = OFF; // RegWrite, write result to register, not memory
-        sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't read memory on r-type
+        sim->id_ex_ctrl.RegWrite = OFF, sim->id_ex_ctrl.MemtoReg = OFF;
 
         /* update pipeline register */
         sim->id_ex_reg.rs_val = EMPTY;
@@ -234,9 +229,9 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
     }
 
     /* recording the instruction history */
-    history[sim->ID_pc].ID = TRUE;
-    history[sim->ID_pc].ID_clock = sim->clock;
-    sim->EXE_pc = sim->ID_pc;
+    history[sim->ID_hist_itr].ID = TRUE;
+    history[sim->ID_hist_itr].ID_clock = sim->clock;
+    sim->EXE_hist_itr = sim->ID_hist_itr;
 }
 
 int get_ALUOp(int opcode)

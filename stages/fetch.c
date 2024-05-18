@@ -6,7 +6,7 @@
  * update pipeline register
  * @param pc   
 */
-void fetch(MIPS32Simulator * sim, History history[MEM_SIZE])
+void fetch(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr)
 {
     int pc;
 
@@ -22,8 +22,13 @@ void fetch(MIPS32Simulator * sim, History history[MEM_SIZE])
     sim->if_id_reg.pc = sim->pc++; /* pc + 4*/
                                    /* update pipeline register */
 
+    /* no op? */
+    if(sim->if_id_reg.instruction == 0x00000000)
+        return;
+
     /* recording the instruction history */
-    history[pc].IF = TRUE;
-    history[pc].IF_clock = sim->clock;
-    sim->ID_pc = pc;
+    history[hist_itr].address = pc; 
+    history[hist_itr].IF = TRUE;
+    history[hist_itr].IF_clock = sim->clock;
+    sim->ID_hist_itr = hist_itr;
 }

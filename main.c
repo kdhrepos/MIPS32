@@ -21,6 +21,8 @@
  * 
  * @author kdhrepos
  **/
+int hist_itr = 0; // instruction iterator for execution history
+
 void init_simulator(MIPS32Simulator * sim)
 {
     /* Memory Init */
@@ -30,7 +32,7 @@ void init_simulator(MIPS32Simulator * sim)
     memset(sim->reg_file, 0, sizeof(sim->reg_file)/sizeof(int));
 
     /* ID/EX control signal initialization */
-	sim->id_ex_ctrl.ALUSrc=OFF, sim->id_ex_ctrl.ALUOp=OFF, sim->id_ex_ctrl.RegDst=OFF;
+    sim->id_ex_ctrl.ALUSrc=OFF, sim->id_ex_ctrl.ALUOp=OFF, sim->id_ex_ctrl.RegDst=OFF;
     sim->id_ex_ctrl.MemRead=OFF, sim->id_ex_ctrl.MemWrite=OFF, sim->id_ex_ctrl.Branch=OFF, 
     sim->id_ex_ctrl.Jump=OFF, sim->id_ex_ctrl.RegWrite=OFF, sim->id_ex_ctrl.MemtoReg=OFF;
 
@@ -63,25 +65,24 @@ void init_simulator(MIPS32Simulator * sim)
 void run_simulator(MIPS32Simulator * sim, History history[MEM_SIZE],
  int program[], int program_size)
 {
-    int pointer = 0; // stage_pointer
-    int instruction = program_size - 1;
+    int last_inst = program_size-1; // stage_pointer
 
     /* execute instructions until the last instruction is fully executed*/
-    while(!history[instruction].end)
+    while(!history[last_inst].end)
     {
-        /* parallel execution */
         sim->clock++;
-        if(!history[instruction].WB)
+        /* parallel execution */
+        if(!history[last_inst].WB)
             write_back(sim, history);
-        if(!history[instruction].MEM)
+        if(!history[last_inst].MEM)
             memory(sim, history);
-        if(!history[instruction].EXE)
+        if(!history[last_inst].EXE)
             execute(sim, history);
-        if(!history[instruction].ID)
+        if(!history[last_inst].ID)
             decode(sim, history);
-        if(!history[instruction].IF)
-            fetch(sim, history);
-
+        if(!history[last_inst].IF)
+            fetch(sim, history, hist_itr);
+        hist_itr++;
     }
 }
 
@@ -99,11 +100,11 @@ int main()
                                /* stores progress status for each of instructions */
     
     int program [] = {
-        0x01285020,   // $t2 = $t0 + $t1
         0x20080002,     // $t0 = 2
+        0x01285020,   // $t2 = $t0 + $t1
         0x20090001,     // $t1 = 1
-        // 0x200D0004,     // $t4 = 4
-        // 0x200E0004,     // $t5 = 5
+        0x200D0004,     // $t4 = 4
+        0x200E0004,     // $t5 = 5
         0x00000000,     // no op
         0x200C0003,     // $t3 = 3
     };
@@ -111,9 +112,10 @@ int main()
     init_simulator(&sim);
     load_program(&sim, program, sizeof(program) / sizeof(int));
 
+     
     run_simulator(&sim, history, program, sizeof(program) / sizeof(int));
 
     print_pipeline_register(&sim);
     print_reg_file(&sim);
-    print_history(&sim, history);
+    print_history(&sim, history, hist_itr);
 }

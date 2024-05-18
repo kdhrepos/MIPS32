@@ -16,7 +16,19 @@ void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
     if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
     && sim->id_ex_ctrl.Branch==OFF && sim->id_ex_ctrl.Jump==OFF && sim->id_ex_ctrl.MemRead==OFF 
     && sim->id_ex_ctrl.MemtoReg==OFF && sim->id_ex_ctrl.MemWrite==OFF && sim->id_ex_ctrl.RegWrite==OFF)
+    {
+        /* set mem stage control signals */
+        sim->ex_mem_ctrl.Branch = OFF, sim->ex_mem_ctrl.Jump = OFF, sim->ex_mem_ctrl.MemRead = OFF,
+        sim->ex_mem_ctrl.MemtoReg = OFF, sim->ex_mem_ctrl.MemWrite = OFF, sim->ex_mem_ctrl.RegWrite = OFF;
+        
+        // /* update pipeline register */
+        // sim->ex_mem_reg.br_tgt = EMPTY;
+        // sim->ex_mem_reg.zero = EMPTY;
+        // sim->ex_mem_reg.ALU_result = EMPTY;
+        // sim->ex_mem_reg.rt_val = EMPTY;
+        // sim->ex_mem_reg.rd_num = EMPTY;
         return;
+    }
 
     /* read id/ex pipeline register */
     int rs_val = sim->id_ex_reg.rs_val;
@@ -81,9 +93,9 @@ void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
     sim->ex_mem_ctrl.MemtoReg  = sim->id_ex_ctrl.MemtoReg;
 
     /* recording the instruction history */
-    history[sim->EXE_pc].EXE = TRUE;
-    history[sim->EXE_pc].EXE_clock = sim->clock;
-    sim->MEM_pc = sim->EXE_pc;
+    history[sim->EXE_hist_itr].EXE = TRUE;
+    history[sim->EXE_hist_itr].EXE_clock = sim->clock;
+    sim->MEM_hist_itr = sim->EXE_hist_itr;
 }
 
 int get_ALU_ctrl(int ALUOp, int funct)

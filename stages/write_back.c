@@ -9,7 +9,7 @@
 void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
 {
     /* no operation? */
-    if(sim->ex_mem_ctrl.MemtoReg==OFF && sim->ex_mem_ctrl.RegWrite==OFF)
+    if(sim->mem_wb_ctrl.MemtoReg==OFF && sim->mem_wb_ctrl.RegWrite==OFF)
         return;
 
     /* read mem/wb pipeline register */
@@ -32,7 +32,7 @@ void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
     }
 
     /* recording the instruction history */
-    history[sim->WB_pc].end = TRUE;
-    history[sim->WB_pc].WB = TRUE;
-    history[sim->WB_pc].WB_clock = sim->clock;
+    history[sim->WB_hist_itr].end = TRUE;
+    history[sim->WB_hist_itr].WB = TRUE;
+    history[sim->WB_hist_itr].WB_clock = sim->clock;
 }
