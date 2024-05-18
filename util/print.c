@@ -1,6 +1,4 @@
-#pragma once
-
-#include "core.h"
+#include "print.h"
 
 void print_pipeline_register(MIPS32Simulator * sim)
 {   
@@ -45,4 +43,15 @@ void print_reg_file(MIPS32Simulator * sim)
     printf("║ $a3[ 7]=[%08X] ║ $t7[15]=[%08X] ║ $s7[23]=[%08X] ║ $ra[31]=[%08X] ║\n", 
            sim->reg_file[7], sim->reg_file[15], sim->reg_file[23], sim->reg_file[31]);
     printf("╚════════════════════╩════════════════════╩════════════════════╩════════════════════╝\n");
+}
+
+void print_history(MIPS32Simulator * sim, History history[MEM_SIZE])
+{
+       for(int i = 0; i < 6; i++)
+       {
+              printf("Inst. : %d\n", sim->memory[i]);
+              printf("IF : %d | ID : %d | EXE : %d | MEM : %d | WB : %d\n\n", 
+              history[i].IF_clock, history[i].ID_clock, history[i].EXE_clock,
+              history[i].MEM_clock, history[i].WB_clock);
+       }
 }

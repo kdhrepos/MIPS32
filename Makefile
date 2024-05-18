@@ -1,9 +1,9 @@
 CC = gcc
 
-# root file
 OBJS = main.o \
 ./stages/fetch.o ./stages/decode.o \
-./stages/execute.o ./stages/memory.o ./stages/write_back.o
+./stages/execute.o ./stages/memory.o ./stages/write_back.o \
+./util/print.o
 
 SRCS = $(OBJS:.o = .c) 
 

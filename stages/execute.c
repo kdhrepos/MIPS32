@@ -10,7 +10,7 @@
 /*
  * instruction execution
 */
-void execute(MIPS32Simulator * sim)
+void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
 {
     /* no operation? */
     if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
@@ -40,12 +40,6 @@ void execute(MIPS32Simulator * sim)
     int ALU_operand_2 = ALUSrc ? imm_val : rt_val;
     int ALU_result;
 
-    if(ALUOp == 0x7)
-    {
-        printf("funct : %d\n",funct);
-        printf("R-Type Value : rs : %d, rt : %d, ALUOp : %b\n\n",rs_val, rt_val, ALU_ctrl_input);
-    }
-
     if(ALU_ctrl_input == 0x0) // and, b'0000
         ALU_result = ALU_operand_1 & ALU_operand_2;
     else if(ALU_ctrl_input == 0x1) // or, b'0001
@@ -69,7 +63,6 @@ void execute(MIPS32Simulator * sim)
     else if(ALU_ctrl_input == 0xA) // shift -> or, b'1010
         ALU_result = ALU_operand_1 & ALU_operand_2;
 
-
     /* update EX/MEM register */
     sim->ex_mem_reg.br_tgt = pc + (imm_val << 2);
     sim->ex_mem_reg.zero = (ALU_result == 0) ? ON : OFF;
@@ -78,14 +71,19 @@ void execute(MIPS32Simulator * sim)
     sim->ex_mem_reg.rd_num = RegDst ? rd_num : rt_num;
 
     /* update control signals */
-    // EX
+    // MEM
     sim->ex_mem_ctrl.MemRead =  sim->id_ex_ctrl.MemRead;
     sim->ex_mem_ctrl.MemWrite  = sim->id_ex_ctrl.MemWrite;
     sim->ex_mem_ctrl.Branch  = sim->id_ex_ctrl.Branch;
     sim->ex_mem_ctrl.Jump  = sim->id_ex_ctrl.Jump; 
-    // MEM
+    // WB
     sim->ex_mem_ctrl.RegWrite  = sim->id_ex_ctrl.RegWrite;
     sim->ex_mem_ctrl.MemtoReg  = sim->id_ex_ctrl.MemtoReg;
+
+    /* recording the instruction history */
+    history[sim->EXE_pc].EXE = TRUE;
+    history[sim->EXE_pc].EXE_clock = sim->clock;
+    sim->MEM_pc = sim->EXE_pc;
 }
 
 int get_ALU_ctrl(int ALUOp, int funct)
@@ -93,7 +91,6 @@ int get_ALU_ctrl(int ALUOp, int funct)
     /* RTYPEOP */
     if(ALUOp == 0x7) // b'111
     {
-        printf("RTYPEOP ALU CTRL : %d, funct : %d\n",ALUOp, funct);
         /* add addu */
         if(funct == ADD || funct == ADDU)
             return 0x3; // add, b'0011

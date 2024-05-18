@@ -12,7 +12,7 @@
  * decode the instruction
  * hazard detection
 */
-void decode(MIPS32Simulator * sim)
+void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
 {
     /* get datas from pipeline register */
     int inst = sim->if_id_reg.instruction; // instruction
@@ -63,7 +63,6 @@ void decode(MIPS32Simulator * sim)
 
         int rs_val = sim->reg_file[rs]; // read rs from register file
         int rt_val = sim->reg_file[rt]; // read rt from register file
-        printf("R-Type Value : rs : %d, rt : %d\n\n",rs_val, rt_val);
 
         /* set exe stage control signals */
         sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt in r-type
@@ -233,6 +232,11 @@ void decode(MIPS32Simulator * sim)
             sim->id_ex_reg.pc = pc;
         }
     }
+
+    /* recording the instruction history */
+    history[sim->ID_pc].ID = TRUE;
+    history[sim->ID_pc].ID_clock = sim->clock;
+    sim->EXE_pc = sim->ID_pc;
 }
 
 int get_ALUOp(int opcode)

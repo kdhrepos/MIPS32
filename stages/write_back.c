@@ -1,13 +1,12 @@
 #include "stages.h"
 
 /*
- * all pipeline registers stay at MIPS32Simulator
- * each stage called reversely, wb -> if because of pipeline register not to be overwrited
- * 
- * 
+ * Write Back
+ * write back stage for MIPS32 pipeline
+ * @param sim pointer of simulator
+ * @param instruction_pc pc value of current instruction to record instruction history
 */
-
-void write_back(MIPS32Simulator * sim)
+void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
 {
     /* no operation? */
     if(sim->ex_mem_ctrl.MemtoReg==OFF && sim->ex_mem_ctrl.RegWrite==OFF)
@@ -31,4 +30,9 @@ void write_back(MIPS32Simulator * sim)
         else 
             sim->reg_file[rd_num] = ALU_result;
     }
+
+    /* recording the instruction history */
+    history[sim->WB_pc].end = TRUE;
+    history[sim->WB_pc].WB = TRUE;
+    history[sim->WB_pc].WB_clock = sim->clock;
 }

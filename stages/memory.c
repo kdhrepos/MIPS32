@@ -10,7 +10,7 @@
 /*
  * access memory
 */
-void memory(MIPS32Simulator * sim)
+void memory(MIPS32Simulator * sim, History history[MEM_SIZE])
 {
     /* no operation? */
     if(sim->ex_mem_ctrl.Branch==OFF && sim->ex_mem_ctrl.Jump==OFF && sim->ex_mem_ctrl.MemRead==OFF 
@@ -35,7 +35,7 @@ void memory(MIPS32Simulator * sim)
         sim->mem_wb_reg.load_data = sim->memory[address];
         
     /* Store */
-    else if(sim->ex_mem_ctrl.MemWrite = ON)
+    else if(sim->ex_mem_ctrl.MemWrite == ON)
     {
         sim->mem_wb_reg.load_data = EMPTY;
         sim->memory[address] = rt_val;
@@ -48,4 +48,9 @@ void memory(MIPS32Simulator * sim)
     /* update control signals */
     sim->mem_wb_ctrl.RegWrite = RegWrite;
     sim->mem_wb_ctrl.MemtoReg = MemtoReg;
+
+    /* recording the instruction history */
+    history[sim->MEM_pc].MEM = TRUE;
+    history[sim->MEM_pc].MEM_clock = sim->clock;
+    sim->WB_pc = sim->MEM_pc;
 }

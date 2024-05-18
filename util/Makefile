@@ -1,9 +1,9 @@
 # CC = gcc
 
-# OBJS = fetch.o decode.o execute.o memory.o write_back.o
+# OBJS = print.o
 # SRCS = $(OBJS:.o = .c)
 
-# TARGET = stage
+# TARGET = util
 
 # $(TARGET) : $(SRCS)
 # 	$(CC) -c $(SRCS)
