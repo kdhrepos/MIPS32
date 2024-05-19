@@ -18,7 +18,7 @@ void fetch(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr)
         pc = sim->pc;
 
     /* update pipeline register */
-    sim->if_id_reg.instruction = sim->memory[pc]; 
+    sim->if_id_reg.instruction = sim->im[pc]; 
     sim->if_id_reg.pc = sim->pc++; /* pc + 4*/
                                    /* update pipeline register */
 

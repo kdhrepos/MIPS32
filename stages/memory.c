@@ -38,13 +38,13 @@ void memory(MIPS32Simulator * sim, History history[MEM_SIZE])
 
     /* Load */
     if(sim->ex_mem_ctrl.MemRead == ON)
-        sim->mem_wb_reg.load_data = sim->memory[address];
+        sim->mem_wb_reg.load_data = sim->im[address];
         
     /* Store */
     else if(sim->ex_mem_ctrl.MemWrite == ON)
     {
         sim->mem_wb_reg.load_data = EMPTY;
-        sim->memory[address] = rt_val;
+        sim->im[address] = rt_val;
     }
 
     /* update pipeline register */

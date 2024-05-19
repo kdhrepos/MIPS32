@@ -21,7 +21,8 @@ typedef int boolean;
 
 /* mips 32 simulator datapath */
 typedef struct {
-	int memory[MEM_SIZE];
+	int im[MEM_SIZE]; // instruction memory
+	int dm[MEM_SIZE]; // data memory
 	int reg_file[REG_SIZE];
 	int pc;
 	int clock;

@@ -26,7 +26,7 @@ int hist_itr = 0; // instruction iterator for execution history
 void init_simulator(MIPS32Simulator * sim)
 {
     /* Memory Init */
-    memset(sim->memory, 0, sizeof(sim->memory)/sizeof(int));
+    memset(sim->im, 0, sizeof(sim->im)/sizeof(int));
 
     /* Register Init */     
     memset(sim->reg_file, 0, sizeof(sim->reg_file)/sizeof(int));
@@ -90,7 +90,7 @@ void run_simulator(MIPS32Simulator * sim, History history[MEM_SIZE],
 void load_program(MIPS32Simulator * sim, int program[], int program_size)
 {
     for(int i = 0; i < program_size; i++)
-        sim->memory[i] = program[i];
+        sim->im[i] = program[i];
 }
 
 int main()

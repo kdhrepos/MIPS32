@@ -75,7 +75,7 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
        /* History */
        for(int itr = 0; itr < sim->pc; itr++)
        {
-              printf("║  %3d  ║     0x%08x     ║", itr*4, sim->memory[itr]);
+              printf("║  %3d  ║     0x%08x     ║", itr*4, sim->im[itr]);
               
               int stage_flag = 0;
               int last_stage_clk = 0; // last stage clock of the instruction
