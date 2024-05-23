@@ -1,15 +1,14 @@
-#include "core.h"
+#include "./core.h"
 #include "./stages/stages.h"
 #include "./util/print.h"
 #include "./util/history.h"
-
+#include "./hazard/hazard.h"
 /*
  *
  * @todo implement data forwarding unit
  * @todo implement hazard detection unit
  * @todo implement id stage branch result checking
  * @todo execution logic for pipeline datapath if instruction like j or branch is executed, we cannot write
- * the instruction history to MEM or WB Stage <- modify!!!!!!!!!!!!!!
  * 
 */
 
@@ -65,12 +64,12 @@ void init_simulator(MIPS32Simulator * sim)
 void run_simulator(MIPS32Simulator * sim, History history[MEM_SIZE],
  int program[], int program_size)
 {
-    int last_inst = program_size-1; // stage_pointer
+    int last_inst = program_size - 1; // stage_pointer
 
     /* execute instructions until the last instruction is fully executed*/
     while(!history[last_inst].end)
     {
-        sim->clock++;
+        sim->clk++;
         /* parallel execution */
         if(!history[last_inst].WB)
             write_back(sim, history);
@@ -101,18 +100,17 @@ int main()
     
     int program [] = {
         0x20080002,     // $t0 = 2
-        0x01285020,   // $t2 = $t0 + $t1
         0x20090001,     // $t1 = 1
         0x200D0004,     // $t4 = 4
         0x200E0004,     // $t5 = 5
         0x00000000,     // no op
         0x200C0003,     // $t3 = 3
+        0x01285020,   // $t2 = $t0 + $t1
     };
 
     init_simulator(&sim);
     load_program(&sim, program, sizeof(program) / sizeof(int));
 
-     
     run_simulator(&sim, history, program, sizeof(program) / sizeof(int));
 
     print_pipeline_register(&sim);
