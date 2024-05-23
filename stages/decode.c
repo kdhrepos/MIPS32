@@ -36,7 +36,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
         sim->id_ex_reg.rt_val = EMPTY;
         sim->id_ex_reg.rt_num = EMPTY;
         sim->id_ex_reg.rd_num = EMPTY;
-        sim->id_ex_reg.imm_val = EMPTY; // don't use immediate field
+        sim->id_ex_reg.imm_val = EMPTY;
         sim->id_ex_reg.pc = pc;
         return;
     }
@@ -80,6 +80,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
         sim->id_ex_reg.rt_num = rt;
         sim->id_ex_reg.rd_num = rd;
         sim->id_ex_reg.imm_val = funct;
+        sim->id_ex_reg.rs_num = rs;
         sim->id_ex_reg.pc = pc;
     }
     else
@@ -110,13 +111,13 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 sim->id_ex_ctrl.RegWrite = OFF; // RegWrite, write result to register, not memory
                 sim->id_ex_ctrl.MemtoReg = DONT_CARE; // MemtoReg, don't care
 
-
                 /* update pipeline register */
                 sim->id_ex_reg.rs_val = rs_value;
                 sim->id_ex_reg.rt_val = rt_value;
                 sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = EMPTY; // don't use immediate field
+                sim->id_ex_reg.rs_num = rs;
                 sim->id_ex_reg.pc = pc;
             }
             /* Store */
@@ -143,6 +144,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
+                sim->id_ex_reg.rs_num = rs;
                 sim->id_ex_reg.pc = pc;
             }
             /* Load */
@@ -169,6 +171,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 sim->id_ex_reg.rt_num = EMPTY; // don't use rt register number
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
+                sim->id_ex_reg.rs_num = rs;
                 sim->id_ex_reg.pc = pc;
             }
             /* Constant */
@@ -195,6 +198,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
+                sim->id_ex_reg.rs_num = rs;
                 sim->id_ex_reg.pc = pc;
             }
         }
@@ -224,13 +228,14 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
             sim->id_ex_reg.rt_num = EMPTY;
             sim->id_ex_reg.rd_num = EMPTY;
             sim->id_ex_reg.imm_val = addr;
+            sim->id_ex_reg.rs_num = rs;
             sim->id_ex_reg.pc = pc;
         }
     }
 
     /* recording the instruction history */
     history[sim->ID_hist_itr].ID = TRUE;
-    history[sim->ID_hist_itr].ID_clock = sim->clock;
+    history[sim->ID_hist_itr].ID_clk = sim->clk;
     sim->EXE_hist_itr = sim->ID_hist_itr;
 }
 

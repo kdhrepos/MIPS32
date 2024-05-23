@@ -26,7 +26,7 @@ void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
         /* Load */
         if(MemtoReg == ON)
             sim->reg_file[rd_num] = loaded_data;
-        /* R-Type */
+        /* RTYPEOP */
         else 
             sim->reg_file[rd_num] = ALU_result;
     }
@@ -34,5 +34,5 @@ void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
     /* recording the instruction history */
     history[sim->WB_hist_itr].end = TRUE;
     history[sim->WB_hist_itr].WB = TRUE;
-    history[sim->WB_hist_itr].WB_clock = sim->clock;
+    history[sim->WB_hist_itr].WB_clk = sim->clk;
 }

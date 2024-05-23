@@ -12,16 +12,27 @@ typedef struct {
     int MemRead, MemWrite, Branch, Jump;
     // WB
     int RegWrite, MemtoReg;
-}ID_EX_CTRL;
+}IdExCtrl;
 
 typedef struct {
     // MEM
     int MemRead, MemWrite, Branch, Jump;
     // WB
     int RegWrite, MemtoReg;
-}EX_MEM_CTRL;
+}ExeMemCtrl;
 
 typedef struct{
     // WB
     int RegWrite, MemtoReg;
-}MEM_WB_CTRL;
+}MemWbCtrl;
+
+typedef struct{
+    int FwdA;
+    int FwdB;
+}FwdCtrl; // Forwarding Control Signals
+
+typedef struct{
+    int pc_write;
+    int if_id_write; 
+    int if_flush;
+}HzrdCtrl;

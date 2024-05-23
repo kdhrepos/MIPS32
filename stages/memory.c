@@ -44,7 +44,7 @@ void memory(MIPS32Simulator * sim, History history[MEM_SIZE])
     else if(sim->ex_mem_ctrl.MemWrite == ON)
     {
         sim->mem_wb_reg.load_data = EMPTY;
-        sim->im[address] = rt_val;
+        sim->dm[address] = rt_val;
     }
 
     /* update pipeline register */
@@ -57,6 +57,6 @@ void memory(MIPS32Simulator * sim, History history[MEM_SIZE])
 
     /* recording the instruction history */
     history[sim->MEM_hist_itr].MEM = TRUE;
-    history[sim->MEM_hist_itr].MEM_clock = sim->clock;
+    history[sim->MEM_hist_itr].MEM_clk = sim->clk;
     sim->WB_hist_itr = sim->MEM_hist_itr;
 }

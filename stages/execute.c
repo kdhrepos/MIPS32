@@ -94,7 +94,7 @@ void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
 
     /* recording the instruction history */
     history[sim->EXE_hist_itr].EXE = TRUE;
-    history[sim->EXE_hist_itr].EXE_clock = sim->clock;
+    history[sim->EXE_hist_itr].EXE_clk = sim->clk;
     sim->MEM_hist_itr = sim->EXE_hist_itr;
 }
 

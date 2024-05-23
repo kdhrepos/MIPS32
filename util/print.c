@@ -54,20 +54,20 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
 
        /* First Line */
        printf("╔═══════╦════════════════════╦");
-       for(int bar = 0; bar <= sim->clock * 6; bar++)
+       for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");            
        printf("╗\n");
        
        /* Header  */
        printf("║  Mem  ║     Instruction    ║ ");
-       for(int clock = 1; clock <= sim->clock; clock++)
-              printf("%3d   ", clock); 
+       for(int clk = 1; clk <= sim->clk; clk++)
+              printf("%3d   ", clk); 
        printf("║\n");
 
-        // for(int bar = 0; bar < 5 * sim->clock; bar++)
+        // for(int bar = 0; bar < 5 * sim->clk; bar++)
        //        printf("═");            printf("╗\n");
        printf("╠═══════╬════════════════════╬");
-       for(int bar = 0; bar <= 6 * sim->clock; bar++)
+       for(int bar = 0; bar <= 6 * sim->clk; bar++)
               printf("═");            
        printf("╣\n");
 
@@ -79,13 +79,13 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
               
               int stage_flag = 0;
               int last_stage_clk = 0; // last stage clock of the instruction
-              if(history[itr].IF) {stage_flag = 1; last_stage_clk = history[itr].IF_clock;}
-              if(history[itr].ID) {stage_flag = 2; last_stage_clk = history[itr].ID_clock;}
-              if(history[itr].EXE) {stage_flag = 3; last_stage_clk = history[itr].EXE_clock;}
-              if(history[itr].MEM) {stage_flag = 4; last_stage_clk = history[itr].MEM_clock;}
-              if(history[itr].WB) {stage_flag = 5; last_stage_clk = history[itr].WB_clock;}
+              if(history[itr].IF) {stage_flag = 1; last_stage_clk = history[itr].IF_clk;}
+              if(history[itr].ID) {stage_flag = 2; last_stage_clk = history[itr].ID_clk;}
+              if(history[itr].EXE) {stage_flag = 3; last_stage_clk = history[itr].EXE_clk;}
+              if(history[itr].MEM) {stage_flag = 4; last_stage_clk = history[itr].MEM_clk;}
+              if(history[itr].WB) {stage_flag = 5; last_stage_clk = history[itr].WB_clk;}
 
-              for(int space = 0; space < (history[itr].IF_clock - 1) * 6; space++)
+              for(int space = 0; space < (history[itr].IF_clk - 1) * 6; space++)
                      printf(" ");
 
               if(stage_flag >= 1) printf("   IF ");
@@ -94,12 +94,12 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
               if(stage_flag >= 4) printf("   MEM");
               if(stage_flag >= 5) printf("   WB ");
 
-              for(int space = 0; space < (sim->clock - last_stage_clk) * 6; space++)
+              for(int space = 0; space < (sim->clk - last_stage_clk) * 6; space++)
                      printf(" ");
               printf(" ║\n");
        }
        printf("╚═══════╩════════════════════╩");
-       for(int bar = 0; bar <= sim->clock * 6; bar++)
+       for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");     
        printf("╝\n");
        // for(int i = 0; i < sim->pc; i++)

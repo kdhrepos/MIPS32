@@ -8,7 +8,7 @@
 typedef struct {
 	int instruction;
     int pc;
-}IF_ID_REG;
+}IfIdReg;
 
 typedef struct {
     int pc;
@@ -17,7 +17,8 @@ typedef struct {
     int rt_num;
     int rd_num;
     int imm_val;
-}ID_EX_REG;
+    int rs_num;
+}IdExeReg;
 
 typedef struct {
     int br_tgt;
@@ -25,10 +26,10 @@ typedef struct {
     int ALU_result;
     int rt_val;
     int rd_num;
-}EX_MEM_REG;
+}ExeMemReg;
 
 typedef struct {
     int load_data; // data from memory
     int ALU_result;
     int rd_num;
-}MEM_WB_REG;
+}MemWbReg;
