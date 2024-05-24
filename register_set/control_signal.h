@@ -32,7 +32,7 @@ typedef struct{
 }FwdCtrl; // Forwarding Control Signals
 
 typedef struct{
-    int pc_write;
-    int if_id_write; 
-    int if_flush;
+    int pc_write; /* no write if data hazard occurred */
+    int if_id_write; /* no write if data hazard occurred */
+    int if_flush; /* flush if control hazard occurred */
 }HzrdCtrl;

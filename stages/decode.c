@@ -30,6 +30,8 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
 
         /* set wb stage control signals */
         sim->id_ex_ctrl.RegWrite = OFF, sim->id_ex_ctrl.MemtoReg = OFF;
+        
+        /* FIXME : pc, if_id_write off */
 
         /* update pipeline register */
         sim->id_ex_reg.rs_val = EMPTY;
@@ -51,6 +53,8 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
     int funct = inst & 0x3F; // function code
     int imm = inst & 0xFFFF; // immediate value
     int addr = inst & 0x1FFFF; // jump address
+
+    hazard_detection(sim, rs, rt);
 
     if(opcode == RTYPEOP)
     {

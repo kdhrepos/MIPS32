@@ -33,7 +33,6 @@ void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
     /* read id/ex pipeline register */
     int rs_val = sim->id_ex_reg.rs_val;
     int rt_val = sim->id_ex_reg.rt_val;
-
     int rt_num = sim->id_ex_reg.rt_num;
     int rd_num = sim->id_ex_reg.rd_num;
     int imm_val = sim->id_ex_reg.imm_val;
