@@ -3,6 +3,8 @@
 #include "../core.h"
 #include "history.h"
 
+void print_guideline();
+
 void print_pipeline_register(MIPS32Simulator * sim);
 
 void print_reg_file(MIPS32Simulator * sim);

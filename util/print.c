@@ -20,6 +20,7 @@ void print_pipeline_register(MIPS32Simulator * sim)
     printf("║                    ║      RT=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║\n", sim->id_ex_reg.rt_num, sim->ex_mem_reg.ALU_result, sim->mem_wb_reg.ALU_result);
     printf("║                    ║      RD=[%08X] ║      RD=[%08X] ║      RD=[%08X] ║\n", sim->id_ex_reg.rd_num, sim->ex_mem_reg.rd_num, sim->mem_wb_reg.rd_num);
     printf("║                    ║     IMM=[%08X] ║                    ║                    ║\n", sim->id_ex_reg.imm_val);
+    printf("║                    ║      RS=[%08X] ║                    ║                    ║\n", sim->id_ex_reg.rs_num);
     printf("╚════════════════════╩════════════════════╩════════════════════╩════════════════════╝\n");
 }
 
@@ -109,4 +110,9 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
        //        history[i].IF_clock, history[i].ID_clock, history[i].EXE_clock,
        //        history[i].MEM_clock, history[i].WB_clock);
        // }
+}
+
+void print_guideline()
+{
+       printf("Press [Any Key] to run\nPress [Q] to stop\n");
 }

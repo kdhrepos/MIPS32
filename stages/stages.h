@@ -2,6 +2,7 @@
 
 #include "../core.h"
 #include "../instruction_set.h"
+#include "../hazard/hazard.h"
 #include "../util/history.h"
 
 void fetch(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr);
