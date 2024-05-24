@@ -49,3 +49,5 @@ typedef struct {
 	int MEM_hist_itr;
 	int WB_hist_itr;
 } MIPS32Simulator;
+
+void init(MIPS32Simulator * sim);
