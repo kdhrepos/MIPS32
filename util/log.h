@@ -10,5 +10,5 @@ typedef struct{
     boolean MEM; int MEM_clk; /* denotes inst. was executed or not on MEM stage and what clock inst. was executed */
     boolean WB; int WB_clk; /* denotes inst. was executed or not on WB stage and what clock inst. was executed */
     boolean end; /* denotes inst. was ended or not */
-}History;
+}Log;
 

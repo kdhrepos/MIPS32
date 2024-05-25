@@ -12,7 +12,7 @@
  * decode the instruction
  * hazard detection
 */
-void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
+void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
     /* get datas from pipeline register */
     int inst = sim->if_id_reg.instruction; // instruction
@@ -54,7 +54,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
     int imm = inst & 0xFFFF; // immediate value
     int addr = inst & 0x1FFFF; // jump address
 
-    hazard_detection(sim, rs, rt);
+    // hazard_detection(sim, rs, rt);
 
     if(opcode == RTYPEOP)
     {
@@ -103,7 +103,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt on branch
                 sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp. b'01
-                sim->id_ex_ctrl.RegDst = DONT_CARE; // RegDst, don't care
+                sim->id_ex_ctrl.RegDst = OFF; // RegDst, don't care
 
                 /* set mem stage control signals */
                 sim->id_ex_ctrl.MemRead = OFF; // MemRead, don't read memory on branch
@@ -113,7 +113,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
 
                 /* set wb stage control signals */
                 sim->id_ex_ctrl.RegWrite = OFF; // RegWrite, write result to register, not memory
-                sim->id_ex_ctrl.MemtoReg = DONT_CARE; // MemtoReg, don't care
+                sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't care
 
                 /* update pipeline register */
                 sim->id_ex_reg.rs_val = rs_value;
@@ -130,7 +130,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
                 /* set exe stage control signals */
                 sim->id_ex_ctrl.ALUSrc = ON; // ALUSrc
                 sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'00
-                sim->id_ex_ctrl.RegDst = DONT_CARE; // RegDst, don't care
+                sim->id_ex_ctrl.RegDst = OFF; // RegDst, don't care
 
                 /* set mem stage control signals */
                 sim->id_ex_ctrl.MemRead = OFF; // MemRead
@@ -140,7 +140,7 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
 
                 /* set wb stage control signals */
                 sim->id_ex_ctrl.RegWrite = OFF; // RegWrite, write result to register, not memory
-                sim->id_ex_ctrl.MemtoReg = DONT_CARE; // MemtoReg, don't care
+                sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't care
 
                 /* update pipeline register */
                 sim->id_ex_reg.rs_val = rs_value;
@@ -238,9 +238,10 @@ void decode(MIPS32Simulator * sim, History history[MEM_SIZE])
     }
 
     /* recording the instruction history */
-    history[sim->ID_hist_itr].ID = TRUE;
-    history[sim->ID_hist_itr].ID_clk = sim->clk;
-    sim->EXE_hist_itr = sim->ID_hist_itr;
+    if(sim->ID_log_itr < 0) return;
+    log[sim->ID_log_itr].ID = TRUE;
+    log[sim->ID_log_itr].ID_clk = sim->clk;
+    sim->EXE_log_itr = sim->ID_log_itr;
 }
 
 int get_ALUOp(int opcode)

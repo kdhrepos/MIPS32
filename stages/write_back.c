@@ -6,11 +6,11 @@
  * @param sim pointer of simulator
  * @param instruction_pc pc value of current instruction to record instruction history
 */
-void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
+void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
     /* no operation? */
-    if(sim->mem_wb_ctrl.MemtoReg==OFF && sim->mem_wb_ctrl.RegWrite==OFF)
-        return;
+    // if(sim->mem_wb_ctrl.MemtoReg==OFF && sim->mem_wb_ctrl.RegWrite==OFF)
+    //     return;
 
     /* read mem/wb pipeline register */
     int loaded_data = sim->mem_wb_reg.load_data;
@@ -31,8 +31,9 @@ void write_back(MIPS32Simulator * sim, History history[MEM_SIZE])
             sim->reg_file[rd_num] = ALU_result;
     }
 
+    if(sim->WB_log_itr < 0) return;
     /* recording the instruction history */
-    history[sim->WB_hist_itr].end = TRUE;
-    history[sim->WB_hist_itr].WB = TRUE;
-    history[sim->WB_hist_itr].WB_clk = sim->clk;
+    log[sim->WB_log_itr].end = TRUE;
+    log[sim->WB_log_itr].WB = TRUE;
+    log[sim->WB_log_itr].WB_clk = sim->clk;
 }

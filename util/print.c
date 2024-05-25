@@ -8,8 +8,8 @@ void print_pipeline_register(MIPS32Simulator * sim)
     printf("║                    ║     MEM_TO_REG=[%d] ║     MEM_TO_REG=[%d] ║     MEM_TO_REG=[%d] ║\n", sim->id_ex_ctrl.MemtoReg, sim->ex_mem_ctrl.MemtoReg, sim->mem_wb_ctrl.MemtoReg);
     printf("║                    ║      REG_WRITE=[%d] ║      REG_WRITE=[%d] ║      REG_WRITE=[%d] ║\n", sim->id_ex_ctrl.RegWrite, sim->ex_mem_ctrl.RegWrite, sim->mem_wb_ctrl.RegWrite);
     printf("║                    ║         BRANCH=[%d] ║         BRANCH=[%d] ║                    ║\n", sim->id_ex_ctrl.Branch, sim->ex_mem_ctrl.Branch);
-    printf("║                    ║       MEM_READ=[%d] ║       MEM_READ=[%d] ║                    ║\n", sim->id_ex_ctrl.MemRead, sim->id_ex_ctrl.MemRead);
-    printf("║                    ║      MEM_WRITE=[%d] ║      MEM_WRITE=[%d] ║                    ║\n", sim->id_ex_ctrl.MemWrite);
+    printf("║                    ║       MEM_READ=[%d] ║       MEM_READ=[%d] ║                    ║\n", sim->id_ex_ctrl.MemRead, sim->ex_mem_ctrl.MemRead);
+    printf("║                    ║      MEM_WRITE=[%d] ║      MEM_WRITE=[%d] ║                    ║\n", sim->id_ex_ctrl.MemWrite, sim->ex_mem_ctrl.MemWrite);
     printf("║                    ║        REG_DST=[%d] ║                    ║                    ║\n", sim->id_ex_ctrl.RegDst);
     printf("║                    ║        ALU_SRC=[%d] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUSrc);
     printf("║                    ║       ALU_OP=[%03b] ║                    ║                    ║\n", sim->id_ex_ctrl.ALUOp);
@@ -17,7 +17,7 @@ void print_pipeline_register(MIPS32Simulator * sim)
     printf("║     NPC=[%08X] ║     NPC=[%08X] ║  BR_TGT=[%08X] ║                    ║\n", sim->if_id_reg.pc, sim->id_ex_reg.pc, sim->ex_mem_reg.br_tgt);
     printf("║                    ║       A=[%08X] ║    ZERO=[%08X] ║     LMD=[%08X] ║\n", sim->id_ex_reg.rs_val, sim->ex_mem_reg.zero, sim->mem_wb_reg.load_data);
     printf("║      IR=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║                    ║\n",  sim->if_id_reg.instruction, sim->id_ex_reg.rt_val, sim->ex_mem_reg.ALU_result);
-    printf("║                    ║      RT=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║\n", sim->id_ex_reg.rt_num, sim->ex_mem_reg.ALU_result, sim->mem_wb_reg.ALU_result);
+    printf("║                    ║      RT=[%08X] ║       B=[%08X] ║ ALU_OUT=[%08X] ║\n", sim->id_ex_reg.rt_num, sim->ex_mem_reg.rt_val, sim->mem_wb_reg.ALU_result);
     printf("║                    ║      RD=[%08X] ║      RD=[%08X] ║      RD=[%08X] ║\n", sim->id_ex_reg.rd_num, sim->ex_mem_reg.rd_num, sim->mem_wb_reg.rd_num);
     printf("║                    ║     IMM=[%08X] ║                    ║                    ║\n", sim->id_ex_reg.imm_val);
     printf("║                    ║      RS=[%08X] ║                    ║                    ║\n", sim->id_ex_reg.rs_num);
@@ -46,7 +46,7 @@ void print_reg_file(MIPS32Simulator * sim)
     printf("╚════════════════════╩════════════════════╩════════════════════╩════════════════════╝\n");
 }
 
-void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_itr)
+void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
 {
        /* get the max clock length */
        // int clock_len = 0;
@@ -80,13 +80,13 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
               
               int stage_flag = 0;
               int last_stage_clk = 0; // last stage clock of the instruction
-              if(history[itr].IF) {stage_flag = 1; last_stage_clk = history[itr].IF_clk;}
-              if(history[itr].ID) {stage_flag = 2; last_stage_clk = history[itr].ID_clk;}
-              if(history[itr].EXE) {stage_flag = 3; last_stage_clk = history[itr].EXE_clk;}
-              if(history[itr].MEM) {stage_flag = 4; last_stage_clk = history[itr].MEM_clk;}
-              if(history[itr].WB) {stage_flag = 5; last_stage_clk = history[itr].WB_clk;}
+              if(log[itr].IF) {stage_flag = 1; last_stage_clk = log[itr].IF_clk;}
+              if(log[itr].ID) {stage_flag = 2; last_stage_clk = log[itr].ID_clk;}
+              if(log[itr].EXE) {stage_flag = 3; last_stage_clk = log[itr].EXE_clk;}
+              if(log[itr].MEM) {stage_flag = 4; last_stage_clk = log[itr].MEM_clk;}
+              if(log[itr].WB) {stage_flag = 5; last_stage_clk = log[itr].WB_clk;}
 
-              for(int space = 0; space < (history[itr].IF_clk - 1) * 6; space++)
+              for(int space = 0; space < (log[itr].IF_clk - 1) * 6; space++)
                      printf(" ");
 
               if(stage_flag >= 1) printf("   IF ");
@@ -103,13 +103,19 @@ void print_history(MIPS32Simulator * sim, History history[MEM_SIZE], int hist_it
        for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");     
        printf("╝\n");
-       // for(int i = 0; i < sim->pc; i++)
-       // {
-       //        printf("Inst. : %d\n", sim->memory[i]);
-       //        printf("IF : %d | ID : %d | EXE : %d | MEM : %d | WB : %d\n\n", 
-       //        history[i].IF_clock, history[i].ID_clock, history[i].EXE_clock,
-       //        history[i].MEM_clock, history[i].WB_clock);
-       // }
+}
+
+void print_data_memory(MIPS32Simulator * sim)
+{      
+       printf("╔═══════════════════════╦═══════════════════[MEMORY]════════════════════╦═══════════════════════╗\n");
+       for(int i = 0; i < 60; i += 4)
+              printf("║ [%08x]=[%08x] ║ [%08x]=[%08x] ║ [%08x]=[%08x] ║ [%08x]=[%08x] ║\n",
+              i*4, sim->dm[i],
+              (i+1)*4, sim->dm[i+1],
+              (i+2)*4, sim->dm[i+2],
+              (i+3)*4, sim->dm[i+3]);
+
+       printf("╚═══════════════════════╩═══════════════════════╩═══════════════════════╩═══════════════════════╝\n");
 }
 
 void print_guideline()

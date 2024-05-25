@@ -44,10 +44,10 @@ typedef struct {
 	HzrdCtrl hzrd_ctrl;
 
 	/* iterator for recording execution history  */
-	int ID_hist_itr;
-	int EXE_hist_itr;
-	int MEM_hist_itr;
-	int WB_hist_itr;
+	int ID_log_itr;
+	int EXE_log_itr;
+	int MEM_log_itr;
+	int WB_log_itr;
 } MIPS32Simulator;
 
 void init(MIPS32Simulator * sim);

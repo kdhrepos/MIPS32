@@ -42,6 +42,10 @@ void init(MIPS32Simulator * sim)
     sim->hzrd_ctrl.if_flush = ON; sim->hzrd_ctrl.if_id_write = ON;
     sim->hzrd_ctrl.pc_write = ON;
 
+    /* Log initialization */
+    sim->ID_log_itr=-1; sim->EXE_log_itr=-1; 
+    sim->MEM_log_itr=-1; sim->WB_log_itr=-1;
+
     /* PC Init */
     sim->pc = 0; 
 }
