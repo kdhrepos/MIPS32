@@ -54,8 +54,6 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
     int imm = inst & 0xFFFF; // immediate value
     int addr = inst & 0x1FFFF; // jump address
 
-    // hazard_detection(sim, rs, rt);
-
     if(opcode == RTYPEOP)
     {
         printf("R-Type Instruction : \n|%d|%d|%d|%d|%d|%d|\n", opcode, rs, rt, rd, shamt, funct);
@@ -144,8 +142,8 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 
                 /* update pipeline register */
                 sim->id_ex_reg.rs_val = rs_value;
-                sim->id_ex_reg.rt_val = EMPTY; // don't need rt register value
-                sim->id_ex_reg.rt_num = rt;
+                sim->id_ex_reg.rt_val = rt_value; 
+                sim->id_ex_reg.rt_num = EMPTY;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
                 sim->id_ex_reg.rs_num = rs;

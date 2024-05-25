@@ -42,7 +42,6 @@ void forwarding(MIPS32Simulator * sim)
     // MUX - second source operand, hazard check
     if(sim->fwd_ctrl.FwdB == 0x02) /* EXE Forward */
         sim->id_ex_reg.rt_val = sim->ex_mem_reg.ALU_result;
-   
     else if(sim->fwd_ctrl.FwdB == 0x01) /* MEM Forward */
         sim->id_ex_reg.rt_val = (sim->mem_wb_ctrl.MemtoReg == ON) ?
         sim->mem_wb_reg.load_data : sim->mem_wb_reg.ALU_result;

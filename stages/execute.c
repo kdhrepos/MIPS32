@@ -10,25 +10,18 @@
 /*
  * instruction execution
 */
-void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
+void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
     /* no operation? */
-    if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
-    && sim->id_ex_ctrl.Branch==OFF && sim->id_ex_ctrl.Jump==OFF && sim->id_ex_ctrl.MemRead==OFF 
-    && sim->id_ex_ctrl.MemtoReg==OFF && sim->id_ex_ctrl.MemWrite==OFF && sim->id_ex_ctrl.RegWrite==OFF)
-    {
-        /* set mem stage control signals */
-        sim->ex_mem_ctrl.Branch = OFF, sim->ex_mem_ctrl.Jump = OFF, sim->ex_mem_ctrl.MemRead = OFF,
-        sim->ex_mem_ctrl.MemtoReg = OFF, sim->ex_mem_ctrl.MemWrite = OFF, sim->ex_mem_ctrl.RegWrite = OFF;
-        
-        // /* update pipeline register */
-        // sim->ex_mem_reg.br_tgt = EMPTY;
-        // sim->ex_mem_reg.zero = EMPTY;
-        // sim->ex_mem_reg.ALU_result = EMPTY;
-        // sim->ex_mem_reg.rt_val = EMPTY;
-        // sim->ex_mem_reg.rd_num = EMPTY;
-        return;
-    }
+    // if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
+    // && sim->id_ex_ctrl.Branch==OFF && sim->id_ex_ctrl.Jump==OFF && sim->id_ex_ctrl.MemRead==OFF 
+    // && sim->id_ex_ctrl.MemtoReg==OFF && sim->id_ex_ctrl.MemWrite==OFF && sim->id_ex_ctrl.RegWrite==OFF)
+    // {
+    //     /* init mem stage control signals */
+    //     sim->ex_mem_ctrl.Branch = OFF; sim->ex_mem_ctrl.Jump = OFF; sim->ex_mem_ctrl.MemRead = OFF;
+    //     sim->ex_mem_ctrl.MemtoReg = OFF; sim->ex_mem_ctrl.MemWrite = OFF; sim->ex_mem_ctrl.RegWrite = OFF;
+    //     return;
+    // }
 
     /* read id/ex pipeline register */
     int rs_val = sim->id_ex_reg.rs_val;
@@ -83,18 +76,20 @@ void execute(MIPS32Simulator * sim, History history[MEM_SIZE])
 
     /* update control signals */
     // MEM
-    sim->ex_mem_ctrl.MemRead =  sim->id_ex_ctrl.MemRead;
-    sim->ex_mem_ctrl.MemWrite  = sim->id_ex_ctrl.MemWrite;
-    sim->ex_mem_ctrl.Branch  = sim->id_ex_ctrl.Branch;
-    sim->ex_mem_ctrl.Jump  = sim->id_ex_ctrl.Jump; 
+    sim->ex_mem_ctrl.MemRead = sim->id_ex_ctrl.MemRead;
+    sim->ex_mem_ctrl.MemWrite = sim->id_ex_ctrl.MemWrite;
+    sim->ex_mem_ctrl.Branch = sim->id_ex_ctrl.Branch;
+    sim->ex_mem_ctrl.Jump = sim->id_ex_ctrl.Jump; 
     // WB
-    sim->ex_mem_ctrl.RegWrite  = sim->id_ex_ctrl.RegWrite;
-    sim->ex_mem_ctrl.MemtoReg  = sim->id_ex_ctrl.MemtoReg;
+    sim->ex_mem_ctrl.RegWrite = sim->id_ex_ctrl.RegWrite;
+    sim->ex_mem_ctrl.MemtoReg = sim->id_ex_ctrl.MemtoReg;
 
+
+    if(sim->EXE_log_itr < 0) return;
     /* recording the instruction history */
-    history[sim->EXE_hist_itr].EXE = TRUE;
-    history[sim->EXE_hist_itr].EXE_clk = sim->clk;
-    sim->MEM_hist_itr = sim->EXE_hist_itr;
+    log[sim->EXE_log_itr].EXE = TRUE;
+    log[sim->EXE_log_itr].EXE_clk = sim->clk;
+    sim->MEM_log_itr = sim->EXE_log_itr;
 }
 
 int get_ALU_ctrl(int ALUOp, int funct)

@@ -32,6 +32,10 @@ void run_simulator(MIPS32Simulator * sim, Log log[MEM_SIZE],
     while(!log[last_inst].end)
     {
         sim->clk++;
+        // hazard_detection(sim, 
+        // (sim->if_id_reg.instruction >> 21) & 0x1F,  // rs
+        // (sim->if_id_reg.instruction >> 16) & 0x1F); // rt
+        
         forwarding(sim); /* data hazard control */
         /* parallel execution */
         if(!log[last_inst].WB)
@@ -71,16 +75,17 @@ int main()
     
     int program [] = {
         // 0x20080002,     // $t0 = 2
+        0x200A000A,     // $t2 = 10
         0x20090001,     // $t1 = 1
-        // 0x01285020,     // $t2 = $t0 + $t1
-        // 0xac0a0000,     // sw $t2, 0($zero)
+        0x200D0004,     // $t4 = 4
+        0x200E0004,     // $t5 = 5
+        0xAC0A0000,     // sw $t2, 0($zero)
         // 0x8e6a0000,     // lw $t2, 0($t3)
-        // 0x200D0004,     // $t4 = 4
-        // 0x200E0004,     // $t5 = 5
-        // 0x00000000,     // no op
-        // 0x200C0003,     // $t3 = 3
-        0x8C280000,  // lw $t0, 0($t1)
-        // 0x010B4020,  // add $t2, $t0, $t3
+        // // 0x00000000,     // no op
+        // // 0x200C0003,     // $t3 = 3
+        // 0x8D280000,  // lw $t0, 0($t1)
+        // 0x01285020,     // $t2 = $t0 + $t1
+        // // 0x010B4020,  // add $t2, $t0, $t3
     };
 
     init(&sim);
