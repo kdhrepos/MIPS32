@@ -18,7 +18,7 @@
 #define FALSE 0
 typedef int boolean;
 
-/* mips 32 simulator datapath */
+/* mips32 integer simulator datapath */
 typedef struct {
 	int im[MEM_SIZE]; // instruction memory
 	int dm[MEM_SIZE]; // data memory

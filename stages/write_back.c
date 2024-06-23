@@ -8,32 +8,33 @@
 */
 void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
-    /* no operation? */
-    // if(sim->mem_wb_ctrl.MemtoReg==OFF && sim->mem_wb_ctrl.RegWrite==OFF)
+    // no operation?
+    // if(sim->mem_wb_ctrl.MemtoReg == OFF 
+    // && sim->mem_wb_ctrl.RegWrite == OFF)
     //     return;
 
-    /* read mem/wb pipeline register */
+    // read mem/wb pipeline register
     int loaded_data = sim->mem_wb_reg.load_data;
     int ALU_result = sim->mem_wb_reg.ALU_result;
     int rd_num = sim->mem_wb_reg.rd_num;
 
-    /* read mem/wb control signals */
+    // read mem/wb control signals
     int RegWrite = sim->mem_wb_ctrl.RegWrite;
     int MemtoReg = sim->mem_wb_ctrl.MemtoReg;
 
     if(RegWrite == ON)
     {
-        /* Load */
+        // Load
         if(MemtoReg == ON)
             sim->reg_file[rd_num] = loaded_data;
-        /* RTYPEOP */
-        else 
+        // RTYPEOP
+        else
             sim->reg_file[rd_num] = ALU_result;
     }
 
-    if(sim->WB_log_itr < 0) return;
-    /* recording the instruction history */
-    log[sim->WB_log_itr].end = TRUE;
-    log[sim->WB_log_itr].WB = TRUE;
-    log[sim->WB_log_itr].WB_clk = sim->clk;
+    // if(sim->WB_log_itr < 0) return;
+    // /* recording the instruction history */
+    // log[sim->WB_log_itr].end = TRUE;
+    // log[sim->WB_log_itr].WB = TRUE;
+    // log[sim->WB_log_itr].WB_clk = sim->clk;
 }

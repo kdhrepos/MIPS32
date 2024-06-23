@@ -22,18 +22,28 @@ void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
     // update pipeline register if IF/ID Write is ON
     if(sim->hzrd_ctrl.if_id_write == ON)
     {
-        sim->if_id_reg.instruction = sim->im[pc]; 
-        sim->if_id_reg.pc = sim->pc++; /* pc + 4*/
-                                       /* update pipeline register */
+        sim->if_id_reg.instruction = sim->im[pc];
+        sim->if_id_reg.pc = sim->pc++;  /* pc + 4*/
+                                        /* update pipeline register */
+    }
+
+    // data hazard occurred
+    if(sim->hzrd_ctrl.if_id_write == OFF
+    && sim->hzrd_ctrl.pc_write == OFF)
+    {
+        // turn on the signals
+        sim->hzrd_ctrl.if_id_write = ON; 
+        sim->hzrd_ctrl.pc_write = ON;
+        return;
     }
         
     /* no op? */
-    if(sim->if_id_reg.instruction == 0x00000000)
-        return;
+    // if(sim->if_id_reg.instruction == 0x00000000)
+    //     return;
 
     /* recording the instruction history */
-    log[log_itr].address = pc; 
-    log[log_itr].IF = TRUE;
-    log[log_itr].IF_clk = sim->clk;
-    sim->ID_log_itr = log_itr;
+    // log[log_itr].address = pc; 
+    // log[log_itr].IF = TRUE;
+    // log[log_itr].IF_clk = sim->clk;
+    // sim->ID_log_itr = log_itr;
 }

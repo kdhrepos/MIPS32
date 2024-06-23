@@ -14,69 +14,44 @@
 */
 void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
-    /* get datas from pipeline register */
-    int inst = sim->if_id_reg.instruction; // instruction
-    int pc = sim->if_id_reg.pc; // pc
+    // get datas from pipeline register
+    int inst = sim->if_id_reg.instruction; /* instruction */
+    int pc = sim->if_id_reg.pc; /* program counter */
 
-    /* no operation? */
-    if(inst == 0x00000000)
-    {
-        /* set exe stage control signals */
-        sim->id_ex_ctrl.ALUSrc = OFF, sim->id_ex_ctrl.ALUOp = OFF, sim->id_ex_ctrl.RegDst = OFF;
-
-        /* set mem stage control signals */
-        sim->id_ex_ctrl.MemRead = OFF, sim->id_ex_ctrl.MemWrite = OFF;
-        sim->id_ex_ctrl.Branch = OFF, sim->id_ex_ctrl.Jump = OFF;
-
-        /* set wb stage control signals */
-        sim->id_ex_ctrl.RegWrite = OFF, sim->id_ex_ctrl.MemtoReg = OFF;
-        
-        /* FIXME : pc, if_id_write off */
-
-        /* update pipeline register */
-        sim->id_ex_reg.rs_val = EMPTY;
-        sim->id_ex_reg.rt_val = EMPTY;
-        sim->id_ex_reg.rt_num = EMPTY;
-        sim->id_ex_reg.rd_num = EMPTY;
-        sim->id_ex_reg.imm_val = EMPTY;
-        sim->id_ex_reg.pc = pc;
-        return;
-    }
-
-    /* parsing instruction */
-    int opcode = (inst >> 26) & 0x3F; // opcode
-    int rs = (inst >> 21) & 0x1F; // first source register
+    // parsing instruction
+    int opcode = (inst >> 26) & 0x3F; /* opcode */
+    int rs = (inst >> 21) & 0x1F; /* first source register */
     int rt = (inst >> 16) & 0x1F; /* second source register on r-type */ 
                                   /* destination register on I-type */
-    int rd = (inst >> 11) & 0x1F; // destination register
-    int shamt = (inst >> 6) & 0x1F;  // shift amount
-    int funct = inst & 0x3F; // function code
-    int imm = inst & 0xFFFF; // immediate value
-    int addr = inst & 0x1FFFF; // jump address
+    int rd = (inst >> 11) & 0x1F; /* destination register */
+    int shamt = (inst >> 6) & 0x1F;  /* shift amount */
+    int funct = inst & 0x3F; /* function code */
+    int imm = inst & 0xFFFF; /* immediate value */
+    int addr = inst & 0x1FFFF; /* jump address */
+
+    int rs_val = sim->reg_file[rs]; /* read rs from register file */
+    int rt_val = sim->reg_file[rt]; /* read rt from register file */
 
     if(opcode == RTYPEOP)
     {
         printf("R-Type Instruction : \n|%d|%d|%d|%d|%d|%d|\n", opcode, rs, rt, rd, shamt, funct);
 
-        int rs_val = sim->reg_file[rs]; // read rs from register file
-        int rt_val = sim->reg_file[rt]; // read rt from register file
+        // set exe stage control signals
+        sim->id_ex_ctrl.ALUSrc = OFF; /* ALUSrc, source register is rt in r-type */
+        sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); /* ALUOp */
+        sim->id_ex_ctrl.RegDst = ON; /* RegDst, destination register is rd in r-type */
 
-        /* set exe stage control signals */
-        sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt in r-type
-        sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp
-        sim->id_ex_ctrl.RegDst = ON; // RegDst, destination register is rd in r-type
+        // set mem stage control signals
+        sim->id_ex_ctrl.MemRead = OFF; /* MemRead, don't read memory on r-type */
+        sim->id_ex_ctrl.MemWrite = OFF; /* MemWrite, dont' write memory on r-type */
+        sim->id_ex_ctrl.Branch = OFF; /* Branch, don't use branch on r-type */
+        sim->id_ex_ctrl.Jump = OFF; /* Jump */
 
-        /* set mem stage control signals */
-        sim->id_ex_ctrl.MemRead = OFF; // MemRead, don't read memory on r-type
-        sim->id_ex_ctrl.MemWrite = OFF; // MemWrite, dont' write memory on r-type
-        sim->id_ex_ctrl.Branch = OFF; // Branch, don't use branch on r-type
-        sim->id_ex_ctrl.Jump = OFF; // Jump
-
-        /* set wb stage control signals */
+        // set wb stage control signals
         sim->id_ex_ctrl.RegWrite = ON; // RegWrite, write result to register, not memory
         sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't read memory on r-type
 
-        /* update pipeline register */
+        // update pipeline register
         sim->id_ex_reg.rs_val = rs_val;
         sim->id_ex_reg.rt_val = rt_val;
         sim->id_ex_reg.rt_num = rt;
@@ -87,13 +62,10 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
     }
     else
     {
-        /* I Type */
+        // I Type
         if(opcode != J && opcode != JAL)
         {
             printf("I-Type Instruction : \n|%d|%d|%d|%d|\n", opcode, rs, rt, imm);
-
-            int rs_value = sim->reg_file[rs]; // read rs from register file
-            int rt_value = sim->reg_file[rt]; // read rt from register file
 
             /* Branch */
             if(opcode == BEQ || opcode == BNE)
@@ -114,8 +86,8 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
                 sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't care
 
                 /* update pipeline register */
-                sim->id_ex_reg.rs_val = rs_value;
-                sim->id_ex_reg.rt_val = rt_value;
+                sim->id_ex_reg.rs_val = rs_val;
+                sim->id_ex_reg.rt_val = rt_val;
                 sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = EMPTY; // don't use immediate field
@@ -141,12 +113,12 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
                 sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't care
 
                 /* update pipeline register */
-                sim->id_ex_reg.rs_val = rs_value;
-                sim->id_ex_reg.rt_val = rt_value; 
-                sim->id_ex_reg.rt_num = EMPTY;
+                sim->id_ex_reg.rs_val = rs_val;
+                sim->id_ex_reg.rt_val = rt_val; 
+                sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
-                sim->id_ex_reg.rs_num = rs;
+                sim->id_ex_reg.rs_num = EMPTY;
                 sim->id_ex_reg.pc = pc;
             }
             /* Load */
@@ -168,9 +140,9 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
                 sim->id_ex_ctrl.MemtoReg = ON; // MemtoReg, don't care
 
                 /* update pipeline register */
-                sim->id_ex_reg.rs_val = rs_value;
-                sim->id_ex_reg.rt_val = rt_value;
-                sim->id_ex_reg.rt_num = EMPTY; // don't use rt register number
+                sim->id_ex_reg.rs_val = rs_val;
+                sim->id_ex_reg.rt_val = EMPTY; // don't use rt register value
+                sim->id_ex_reg.rt_num = rt; 
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
                 sim->id_ex_reg.imm_val = imm;
                 sim->id_ex_reg.rs_num = rs;
@@ -195,7 +167,7 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
                 sim->id_ex_ctrl.MemtoReg = OFF; // MemtoReg, don't care
 
                 /* update pipeline register */
-                sim->id_ex_reg.rs_val = rs_value;
+                sim->id_ex_reg.rs_val = rs_val;
                 sim->id_ex_reg.rt_val = EMPTY; // don't use rt register value
                 sim->id_ex_reg.rt_num = rt;
                 sim->id_ex_reg.rd_num = EMPTY; // don't use rd register number
@@ -204,7 +176,7 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
                 sim->id_ex_reg.pc = pc;
             }
         }
-        /* J Type */
+        // J Type
         else
         {
             printf("J-Type Instruction : \n|%d|%d|\n", opcode, addr);
@@ -235,11 +207,31 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
         }
     }
 
-    /* recording the instruction history */
-    if(sim->ID_log_itr < 0) return;
-    log[sim->ID_log_itr].ID = TRUE;
-    log[sim->ID_log_itr].ID_clk = sim->clk;
-    sim->EXE_log_itr = sim->ID_log_itr;
+    // no operation?
+    // if(inst == 0x00000000)
+    // {
+    //     /* set exe stage control signals */
+    //     sim->id_ex_ctrl.ALUSrc = OFF, sim->id_ex_ctrl.ALUOp = OFF, sim->id_ex_ctrl.RegDst = OFF;
+
+    //     /* set mem stage control signals */
+    //     sim->id_ex_ctrl.MemRead = OFF, sim->id_ex_ctrl.MemWrite = OFF;
+    //     sim->id_ex_ctrl.Branch = OFF, sim->id_ex_ctrl.Jump = OFF;
+
+    //     /* set wb stage control signals */
+    //     sim->id_ex_ctrl.RegWrite = OFF, sim->id_ex_ctrl.MemtoReg = OFF;
+
+    //     /* recording the instruction history */
+    //     log[sim->ID_log_itr].ID = FALSE;
+    //     log[sim->ID_log_itr].ID_clk = sim->clk;
+    //     sim->EXE_log_itr = sim->ID_log_itr;
+    //     return;
+    // }
+
+    // if(sim->ID_log_itr < 0) return;
+    // /* recording the instruction history */
+    // log[sim->ID_log_itr].ID = TRUE;
+    // log[sim->ID_log_itr].ID_clk = sim->clk;
+    // sim->EXE_log_itr = sim->ID_log_itr;
 }
 
 int get_ALUOp(int opcode)

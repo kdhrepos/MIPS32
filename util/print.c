@@ -48,11 +48,6 @@ void print_reg_file(MIPS32Simulator * sim)
 
 void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
 {
-       /* get the max clock length */
-       // int clock_len = 0;
-       // while((sim->clock) / 10)
-       //        clock_len++;
-
        /* First Line */
        printf("╔═══════╦════════════════════╦");
        for(int bar = 0; bar <= sim->clk * 6; bar++)
@@ -65,15 +60,13 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
               printf("%3d   ", clk); 
        printf("║\n");
 
-        // for(int bar = 0; bar < 5 * sim->clk; bar++)
-       //        printf("═");            printf("╗\n");
        printf("╠═══════╬════════════════════╬");
        for(int bar = 0; bar <= 6 * sim->clk; bar++)
               printf("═");            
        printf("╣\n");
 
         
-       /* History */
+       /* Execution log */
        for(int itr = 0; itr < sim->pc; itr++)
        {
               printf("║  %3d  ║     0x%08x     ║", itr*4, sim->im[itr]);
@@ -99,6 +92,8 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
                      printf(" ");
               printf(" ║\n");
        }
+       
+       /* Last Line*/
        printf("╚═══════╩════════════════════╩");
        for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");     
