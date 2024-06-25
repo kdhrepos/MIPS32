@@ -11,7 +11,13 @@
  * instruction execution
 */
 void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
-{
+{    
+    // previous stage is off, so off the execute stage
+    if(sim->id_on == OFF)
+    {
+        sim->ex_on = OFF;
+        return;
+    }
     /* no operation? */
     // if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
     // && sim->id_ex_ctrl.Branch==OFF && sim->id_ex_ctrl.Jump==OFF && sim->id_ex_ctrl.MemRead==OFF 
@@ -84,12 +90,10 @@ void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
     sim->ex_mem_ctrl.RegWrite = sim->id_ex_ctrl.RegWrite;
     sim->ex_mem_ctrl.MemtoReg = sim->id_ex_ctrl.MemtoReg;
 
-
-    // if(sim->EXE_log_itr < 0) return;
-    // // recording the instruction history
-    // log[sim->EXE_log_itr].EXE = TRUE;
-    // log[sim->EXE_log_itr].EXE_clk = sim->clk;
-    // sim->MEM_log_itr = sim->EXE_log_itr;
+    // recording the instruction history
+    log[sim->EXE_log_itr].EXE = TRUE;
+    log[sim->EXE_log_itr].EXE_clk = sim->clk;
+    sim->MEM_log_itr = sim->EXE_log_itr;
 }
 
 int get_ALU_ctrl(int ALUOp, int funct)

@@ -48,13 +48,13 @@ void print_reg_file(MIPS32Simulator * sim)
 
 void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
 {
-       /* First Line */
+       // First Line
        printf("╔═══════╦════════════════════╦");
        for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");            
        printf("╗\n");
        
-       /* Header  */
+       // Header 
        printf("║  Mem  ║     Instruction    ║ ");
        for(int clk = 1; clk <= sim->clk; clk++)
               printf("%3d   ", clk); 
@@ -66,10 +66,10 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
        printf("╣\n");
 
         
-       /* Execution log */
+       // Execution log
        for(int itr = 0; itr < sim->pc; itr++)
        {
-              printf("║  %3d  ║     0x%08x     ║", itr*4, sim->im[itr]);
+              printf("║  %3d  ║     0x%08X     ║", itr*4, sim->im[itr]);
               
               int stage_flag = 0;
               int last_stage_clk = 0; // last stage clock of the instruction
@@ -93,7 +93,7 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
               printf(" ║\n");
        }
        
-       /* Last Line*/
+       // Last Line 
        printf("╚═══════╩════════════════════╩");
        for(int bar = 0; bar <= sim->clk * 6; bar++)
               printf("═");     

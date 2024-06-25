@@ -23,6 +23,12 @@ void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
     if(sim->hzrd_ctrl.if_id_write == ON)
     {
         sim->if_id_reg.instruction = sim->im[pc];
+        // End of Program, off the IF Stage
+        if(sim->if_id_reg.instruction == EOP)
+        {
+            sim->if_on = OFF;
+            return;
+        }
         sim->if_id_reg.pc = sim->pc++;  /* pc + 4*/
                                         /* update pipeline register */
     }
@@ -37,13 +43,13 @@ void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
         return;
     }
         
-    /* no op? */
+    // no op?
     // if(sim->if_id_reg.instruction == 0x00000000)
     //     return;
 
-    /* recording the instruction history */
-    // log[log_itr].address = pc; 
-    // log[log_itr].IF = TRUE;
-    // log[log_itr].IF_clk = sim->clk;
-    // sim->ID_log_itr = log_itr;
+    // recording the instruction history
+    log[log_itr].address = pc; 
+    log[log_itr].IF = TRUE;
+    log[log_itr].IF_clk = sim->clk;
+    sim->ID_log_itr = log_itr;
 }

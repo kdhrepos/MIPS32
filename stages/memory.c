@@ -12,6 +12,12 @@
 */
 void memory(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
+    // previous stage is off, so off the mem stage
+    if(sim->ex_on == OFF)
+    {
+        sim->mem_on = OFF;
+        return;
+    }
     /* no operation? */
     // if(sim->ex_mem_ctrl.Branch == OFF && sim->ex_mem_ctrl.Jump == OFF && sim->ex_mem_ctrl.MemRead == OFF 
     // && sim->ex_mem_ctrl.MemtoReg == OFF && sim->ex_mem_ctrl.MemWrite == OFF && sim->ex_mem_ctrl.RegWrite == OFF)
@@ -60,9 +66,8 @@ void memory(MIPS32Simulator * sim, Log log[MEM_SIZE])
     //     return;
     // }
 
-    // if(sim->MEM_log_itr < 0) return;
-    // /* recording the instruction history */
-    // log[sim->MEM_log_itr].MEM = TRUE;
-    // log[sim->MEM_log_itr].MEM_clk = sim->clk;
-    // sim->WB_log_itr = sim->MEM_log_itr;
+    // recording the instruction history
+    log[sim->MEM_log_itr].MEM = TRUE;
+    log[sim->MEM_log_itr].MEM_clk = sim->clk;
+    sim->WB_log_itr = sim->MEM_log_itr;
 }

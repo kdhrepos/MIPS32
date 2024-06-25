@@ -2,30 +2,30 @@
 
 void forwarding(MIPS32Simulator * sim)
 {
-   /* no hazard */
+   // no hazard 
    sim->fwd_ctrl.FwdA = 0x00;
    sim->fwd_ctrl.FwdB = 0x00;
 
-   /* EXE Forward - rs */
+   // EXE Forward - rs 
    if(sim->ex_mem_ctrl.RegWrite && 
       sim->ex_mem_reg.rd_num != 0 &&
       sim->ex_mem_reg.rd_num == sim->id_ex_reg.rs_num)
       sim->fwd_ctrl.FwdA = 0x02;
 
-   /* MEM Forward - rs */
+   // MEM Forward - rs
    if(sim->mem_wb_ctrl.RegWrite && sim->mem_wb_reg.rd_num != 0
    && !(sim->ex_mem_ctrl.RegWrite && sim->ex_mem_reg.rd_num != 0
    && (sim->ex_mem_reg.rd_num == sim->id_ex_reg.rs_num))
    && sim->mem_wb_reg.rd_num == sim->id_ex_reg.rs_num)
       sim->fwd_ctrl.FwdA = 0x01;
 
-   /* EXE Forward - rt */
+   // EXE Forward - rt
    if(sim->ex_mem_ctrl.RegWrite && 
       sim->ex_mem_reg.rd_num != 0 && 
       sim->ex_mem_reg.rd_num == sim->id_ex_reg.rt_num)
       sim->fwd_ctrl.FwdB = 0x02;
 
-   /* MEM Forward - rt */
+   // MEM Forward - rt
    if(sim->mem_wb_ctrl.RegWrite && sim->mem_wb_reg.rd_num != 0
    && !(sim->ex_mem_ctrl.RegWrite && sim->ex_mem_reg.rd_num != 0
    && (sim->ex_mem_reg.rd_num == sim->id_ex_reg.rt_num))

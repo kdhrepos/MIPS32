@@ -2,7 +2,7 @@
 
 void hazard_detection(MIPS32Simulator * sim, int rs, int rt)
 {
-    /* load-use data hazard */
+    // load-use data hazard
     if(sim->id_ex_ctrl.MemRead &&       /* if (ID/EX.MemRead and */
     (sim->id_ex_reg.rt_num == rs        /* ((ID/EX.RegisterRt = IF/ID.RegisterRs) */
     || sim->id_ex_reg.rt_num == rt))    /* or (ID/EX.RegisterRt = IF/ID.RegisterRt))) */
@@ -18,7 +18,7 @@ void hazard_detection(MIPS32Simulator * sim, int rs, int rt)
     sim->hzrd_ctrl.pc_write = ON;
     sim->hzrd_ctrl.if_id_write = ON;
 
-    /* control hazard */
+    // control hazard
     // int imm_val = 0xFFFF;
     // int br_tgt = sim->pc + (imm_val << 2);
 }

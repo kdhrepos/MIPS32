@@ -14,6 +14,13 @@
 */
 void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
+    // previous stage is off, so off the decode stage
+    if(sim->if_on == OFF)
+    {
+        sim->id_on = OFF;
+        return;
+    }
+
     // get datas from pipeline register
     int inst = sim->if_id_reg.instruction; /* instruction */
     int pc = sim->if_id_reg.pc; /* program counter */
@@ -227,11 +234,10 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
     //     return;
     // }
 
-    // if(sim->ID_log_itr < 0) return;
-    // /* recording the instruction history */
-    // log[sim->ID_log_itr].ID = TRUE;
-    // log[sim->ID_log_itr].ID_clk = sim->clk;
-    // sim->EXE_log_itr = sim->ID_log_itr;
+    // recording the instruction history
+    log[sim->ID_log_itr].ID = TRUE;
+    log[sim->ID_log_itr].ID_clk = sim->clk;
+    sim->EXE_log_itr = sim->ID_log_itr;
 }
 
 int get_ALUOp(int opcode)

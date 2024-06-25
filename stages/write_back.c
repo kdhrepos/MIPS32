@@ -8,6 +8,13 @@
 */
 void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
+    // previous stage is off, so off the wb stage
+    if(sim->mem_on == OFF)
+    {
+        sim->wb_on = OFF; /* Program finally exited */
+        return;
+    }
+
     // no operation?
     // if(sim->mem_wb_ctrl.MemtoReg == OFF 
     // && sim->mem_wb_ctrl.RegWrite == OFF)
@@ -32,9 +39,8 @@ void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
             sim->reg_file[rd_num] = ALU_result;
     }
 
-    // if(sim->WB_log_itr < 0) return;
-    // /* recording the instruction history */
-    // log[sim->WB_log_itr].end = TRUE;
-    // log[sim->WB_log_itr].WB = TRUE;
-    // log[sim->WB_log_itr].WB_clk = sim->clk;
+    // recording the instruction history
+    log[sim->WB_log_itr].end = TRUE;
+    log[sim->WB_log_itr].WB = TRUE;
+    log[sim->WB_log_itr].WB_clk = sim->clk;
 }
