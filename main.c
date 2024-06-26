@@ -4,19 +4,16 @@
 #include "./util/log.h"
 #include "./hazard/hazard.h"
 
-int log_itr = 0; /* instruction iterator for execution history */
-
 void run_simulator(
     MIPS32Simulator * sim, Log log[MEM_SIZE],
     int program[], int program_size)
 {
-    boolean smooth = FALSE; /* no input if it's TRUE */
+    // boolean smooth = FALSE; /* no input if it's TRUE */
 
-    // execute instructions until the wb stage off
-    while(sim->wb_on == TRUE)
+    // execute instructions until all instruction is executed
+    while(sim->mem_on)
     {   
         sim->clk++;
-
         // parallel execution
         forwarding(sim); /* data hazard control */
         
@@ -24,18 +21,15 @@ void run_simulator(
         if(sim->mem_on)  memory(sim, log);
         if(sim->ex_on)   execute(sim, log);
         if(sim->id_on)   decode(sim, log);
-        if(sim->if_on)   fetch(sim, log, log_itr);
+        if(sim->if_on)   fetch(sim, log);
 
         hazard_detection(sim, 
         (sim->if_id_reg.instruction >> 21) & 0x1F,  /* rs */
         (sim->if_id_reg.instruction >> 16) & 0x1F); /* rt */
 
-        if(sim->if_on)
-            log_itr++;
-
         // print_pipeline_register(sim);
         // print_reg_file(sim);
-        print_log(sim, log, log_itr);
+        print_log(sim, log);
         // print_data_memory(sim);
         print_guideline();
         char c = getchar(); 
@@ -80,9 +74,9 @@ int main()
 
     run_simulator(&sim, log, program, sizeof(program) / sizeof(int));
 
-    print_data_memory(&sim);
-    print_pipeline_register(&sim);
-    print_reg_file(&sim);
-    print_log(&sim, log, log_itr);
+    // print_data_memory(&sim);
+    // print_pipeline_register(&sim);
+    // print_reg_file(&sim);
+    // print_log(&sim, log);
     // print_history(&sim, history, hist_itr);
 }

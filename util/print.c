@@ -46,7 +46,7 @@ void print_reg_file(MIPS32Simulator * sim)
     printf("╚════════════════════╩════════════════════╩════════════════════╩════════════════════╝\n");
 }
 
-void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
+void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
        // First Line
        printf("╔═══════╦════════════════════╦");
@@ -66,13 +66,13 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
        printf("╣\n");
 
         
-       // Execution log
-       for(int itr = 0; itr < sim->pc; itr++)
+       // print execution log
+       for(int itr = 0; itr < sim->log_itr; itr++)
        {
-              printf("║  %3d  ║     0x%08X     ║", itr*4, sim->im[itr]);
+              printf("║  %3d  ║     0x%08X     ║", itr*4, log[itr].instruction);
               
               int stage_flag = 0;
-              int last_stage_clk = 0; // last stage clock of the instruction
+              int last_stage_clk = 0; /* last stage clock of the instruction */
               if(log[itr].IF) {stage_flag = 1; last_stage_clk = log[itr].IF_clk;}
               if(log[itr].ID) {stage_flag = 2; last_stage_clk = log[itr].ID_clk;}
               if(log[itr].EXE) {stage_flag = 3; last_stage_clk = log[itr].EXE_clk;}

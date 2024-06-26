@@ -43,8 +43,9 @@ void init(MIPS32Simulator * sim)
     sim->hzrd_ctrl.pc_write = ON;
 
     // Log initialization 
-    sim->ID_log_itr=-1; sim->EXE_log_itr=-1; 
-    sim->MEM_log_itr=-1; sim->WB_log_itr=-1;
+    sim->log_itr = 0;
+    sim->ID_log_itr=-1; sim->EXE_log_itr=-1; /* don't record at start point */
+    sim->MEM_log_itr=-1; sim->WB_log_itr=-1; /* don't record at start point */
 
     // Stage status initialization as ON;
     sim->if_on = ON;

@@ -5,7 +5,7 @@
 #include "../hazard/hazard.h"
 #include "../util/log.h"
 
-void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr);
+void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE]);
 
 void decode(MIPS32Simulator * sim, Log log[MEM_SIZE]);
 int get_ALUOp(int opcode);

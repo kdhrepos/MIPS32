@@ -1,12 +1,6 @@
 #include "stages.h"
 
-/*
- * fetch the program
- * call decode stage
- * update pipeline register
- * @param pc   
-*/
-void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
+void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
     int pc;
 
@@ -33,22 +27,23 @@ void fetch(MIPS32Simulator * sim, Log log[MEM_SIZE], int log_itr)
                                         /* update pipeline register */
     }
 
-    // data hazard occurred
-    if(sim->hzrd_ctrl.if_id_write == OFF
-    && sim->hzrd_ctrl.pc_write == OFF)
-    {
-        // turn on the signals
-        sim->hzrd_ctrl.if_id_write = ON; 
-        sim->hzrd_ctrl.pc_write = ON;
-        return;
-    }
+    // // data hazard occurred
+    // if(sim->hzrd_ctrl.if_id_write == OFF
+    // && sim->hzrd_ctrl.pc_write == OFF)
+    // {
+    //     // turn on the signals
+    //     sim->hzrd_ctrl.if_id_write = ON; 
+    //     sim->hzrd_ctrl.pc_write = ON;
+    //     return;
+    // }
         
     // no op?
     // if(sim->if_id_reg.instruction == 0x00000000)
     //     return;
 
-    // recording the instruction history
-    log[log_itr].address = pc; 
+    // recording the execution log
+    int log_itr = sim->log_itr++;
+    log[log_itr].instruction = sim->if_id_reg.instruction; 
     log[log_itr].IF = TRUE;
     log[log_itr].IF_clk = sim->clk;
     sim->ID_log_itr = log_itr;

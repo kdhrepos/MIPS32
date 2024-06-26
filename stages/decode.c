@@ -7,11 +7,6 @@
  * 
 */
 
-
-/*
- * decode the instruction
- * hazard detection
-*/
 void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
     // previous stage is off, so off the decode stage
@@ -234,7 +229,8 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
     //     return;
     // }
 
-    // recording the instruction history
+    if(sim->ID_log_itr < 0) return;
+    // recording the execution log
     log[sim->ID_log_itr].ID = TRUE;
     log[sim->ID_log_itr].ID_clk = sim->clk;
     sim->EXE_log_itr = sim->ID_log_itr;

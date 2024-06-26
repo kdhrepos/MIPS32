@@ -53,7 +53,8 @@ typedef struct {
 	boolean mem_on;
 	boolean wb_on;
 
-	// iterator for recording execution history  
+	// iterator for recording execution history 
+	int log_itr;
 	int ID_log_itr;
 	int EXE_log_itr;
 	int MEM_log_itr;

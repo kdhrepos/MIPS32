@@ -66,6 +66,8 @@ void memory(MIPS32Simulator * sim, Log log[MEM_SIZE])
     //     return;
     // }
 
+    if(sim->MEM_log_itr< 0) return;
+
     // recording the instruction history
     log[sim->MEM_log_itr].MEM = TRUE;
     log[sim->MEM_log_itr].MEM_clk = sim->clk;

@@ -11,7 +11,7 @@ void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
     // previous stage is off, so off the wb stage
     if(sim->mem_on == OFF)
     {
-        sim->wb_on = OFF; /* Program finally exited */
+        sim->wb_on = OFF; /* program finally exited */
         return;
     }
 
@@ -38,6 +38,8 @@ void write_back(MIPS32Simulator * sim, Log log[MEM_SIZE])
         else
             sim->reg_file[rd_num] = ALU_result;
     }
+
+    if(sim->WB_log_itr < 0) return;
 
     // recording the instruction history
     log[sim->WB_log_itr].end = TRUE;
