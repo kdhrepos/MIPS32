@@ -113,6 +113,28 @@ void print_data_memory(MIPS32Simulator * sim)
        printf("╚═══════════════════════╩═══════════════════════╩═══════════════════════╩═══════════════════════╝\n");
 }
 
+void print_hazard(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg)
+{
+       int ID_log_itr = sim->ID_log_itr;
+       int EXE_log_itr = sim->EXE_log_itr;
+       int MEM_log_itr = sim->MEM_log_itr;
+
+       if(strcmp(msg, "EXE")==0)
+       {
+              printf("╔═══════════════════════════════════════╗\n");
+              printf("║ EXE Forward, 0x%08X -> 0x%08X ║\n", 
+              log[EXE_log_itr].instruction, log[ID_log_itr].instruction);
+              printf("╚═══════════════════════════════════════╝\n");
+       }
+       else if (strcmp(msg, "MEM")==0)
+       {
+              printf("╔═══════════════════════════════════════╗\n");
+              printf("║ MEM Forward, 0x%08X -> 0x%08X ║\n", 
+              log[MEM_log_itr].instruction, log[EXE_log_itr].instruction);
+              printf("╚═══════════════════════════════════════╝\n");
+       }
+}
+
 void print_guideline()
 {
        printf("Press [Any Key] to run\nPress [Q] to stop\n");

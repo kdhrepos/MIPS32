@@ -1,6 +1,6 @@
 #include "hazard.h"
 
-void forwarding(MIPS32Simulator * sim)
+void forwarding(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
    // no hazard 
    sim->fwd_ctrl.FwdA = 0x00;
@@ -34,16 +34,28 @@ void forwarding(MIPS32Simulator * sim)
    
     // MUX - first source operand, hazard check
    if(sim->fwd_ctrl.FwdA == 0x02) /* EXE Forward */
+   {
       sim->id_ex_reg.rs_val = sim->ex_mem_reg.ALU_result;
+      print_hazard(sim, log, "EXE");
+   }
    else if(sim->fwd_ctrl.FwdA == 0x01) /* MEM Forward */
+   {
       sim->id_ex_reg.rs_val = (sim->mem_wb_ctrl.MemtoReg == ON) ? 
       sim->mem_wb_reg.load_data : sim->mem_wb_reg.ALU_result;
+      print_hazard(sim, log, "MEM");
+   }
 
     // MUX - second source operand, hazard check
     if(sim->fwd_ctrl.FwdB == 0x02) /* EXE Forward */
-        sim->id_ex_reg.rt_val = sim->ex_mem_reg.ALU_result;
+    {
+         sim->id_ex_reg.rt_val = sim->ex_mem_reg.ALU_result;
+         print_hazard(sim, log, "EXE");
+    }
     else if(sim->fwd_ctrl.FwdB == 0x01) /* MEM Forward */
-        sim->id_ex_reg.rt_val = (sim->mem_wb_ctrl.MemtoReg == ON) ?
-        sim->mem_wb_reg.load_data : sim->mem_wb_reg.ALU_result;
+    {
+         sim->id_ex_reg.rt_val = (sim->mem_wb_ctrl.MemtoReg == ON) ?
+         sim->mem_wb_reg.load_data : sim->mem_wb_reg.ALU_result;
+         print_hazard(sim, log, "MEM");
+    }
     
 }
