@@ -65,31 +65,40 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE])
               printf("═");            
        printf("╣\n");
 
-        
+       int last_inst_clk = 1;
+       int last_inst_itr = sim->log_itr - 1;
+       if(log[last_inst_itr].IF) last_inst_clk = log[last_inst_itr].IF_clk;
+       if(log[last_inst_itr].ID) last_inst_clk = log[last_inst_itr].ID_clk;
+       if(log[last_inst_itr].EXE) last_inst_clk = log[last_inst_itr].EXE_clk;
+       if(log[last_inst_itr].MEM) last_inst_clk = log[last_inst_itr].MEM_clk;
+       if(log[last_inst_itr].WB) last_inst_clk = log[last_inst_itr].WB_clk;
+
        // print execution log
-       for(int itr = 0; itr < sim->log_itr; itr++)
+       for(int itr = 0; itr <= last_inst_itr; itr++)
        {
               printf("║  %3d  ║     0x%08X     ║", itr*4, log[itr].instruction);
-              
-              int stage_flag = 0;
-              int last_stage_clk = 0; /* last stage clock of the instruction */
-              if(log[itr].IF) {stage_flag = 1; last_stage_clk = log[itr].IF_clk;}
-              if(log[itr].ID) {stage_flag = 2; last_stage_clk = log[itr].ID_clk;}
-              if(log[itr].EXE) {stage_flag = 3; last_stage_clk = log[itr].EXE_clk;}
-              if(log[itr].MEM) {stage_flag = 4; last_stage_clk = log[itr].MEM_clk;}
-              if(log[itr].WB) {stage_flag = 5; last_stage_clk = log[itr].WB_clk;}
 
-              for(int space = 0; space < (log[itr].IF_clk - 1) * 6; space++)
-                     printf(" ");
+              int clk = 1;
+              int stage_ptr = 0; /* IF : 0, ID : 1, EXE : 2, MEM : 3, WB : 4 */
+              int stage_clk[] = {log[itr].IF_clk, log[itr].ID_clk, log[itr].EXE_clk, log[itr].MEM_clk, log[itr].WB_clk}; /* clock cycle for each stage */
+              char * stage_str[] = {"IF ", "ID ", "EXE", "MEM", "WB "};
 
-              if(stage_flag >= 1) printf("   IF ");
-              if(stage_flag >= 2) printf("   ID ");
-              if(stage_flag >= 3) printf("   EXE");
-              if(stage_flag >= 4) printf("   MEM");
-              if(stage_flag >= 5) printf("   WB ");
+              while(clk <= last_inst_clk)
+              {
+                     if(stage_clk[stage_ptr] == clk) 
+                            printf("   %s", stage_str[stage_ptr++]);
+                     else 
+                     {
+                            // instruction was started but ain't done,
+                            // but empty clock occurred -> insert bubble
+                            if(stage_ptr > 0 && stage_ptr < 5)
+                                   printf("bubble");
+                            else /* print the space */
+                                   for(int space = 0; space < 6; space++) printf(" ");
 
-              for(int space = 0; space < (sim->clk - last_stage_clk) * 6; space++)
-                     printf(" ");
+                     }
+                     clk++;
+              }
               printf(" ║\n");
        }
        
@@ -113,29 +122,44 @@ void print_data_memory(MIPS32Simulator * sim)
        printf("╚═══════════════════════╩═══════════════════════╩═══════════════════════╩═══════════════════════╝\n");
 }
 
-void print_hazard(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg)
+void print_forwarding(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg)
 {
-       int ID_log_itr = sim->ID_log_itr;
        int EXE_log_itr = sim->EXE_log_itr;
        int MEM_log_itr = sim->MEM_log_itr;
+       int WB_log_itr = sim->WB_log_itr;
 
        if(strcmp(msg, "EXE")==0)
        {
-              printf("╔═══════════════════════════════════════╗\n");
-              printf("║ EXE Forward, 0x%08X -> 0x%08X ║\n", 
-              log[EXE_log_itr].instruction, log[ID_log_itr].instruction);
-              printf("╚═══════════════════════════════════════╝\n");
-       }
-       else if (strcmp(msg, "MEM")==0)
-       {
-              printf("╔═══════════════════════════════════════╗\n");
-              printf("║ MEM Forward, 0x%08X -> 0x%08X ║\n", 
+              printf("╔═══════════════════════════════════════════╗\n");
+              printf("║ [!] EXE Forward, 0x%08X -> 0x%08X ║\n", 
               log[MEM_log_itr].instruction, log[EXE_log_itr].instruction);
-              printf("╚═══════════════════════════════════════╝\n");
+              printf("╚═══════════════════════════════════════════╝\n");
        }
+       if (strcmp(msg, "MEM")==0)
+       {
+              printf("╔═══════════════════════════════════════════╗\n");
+              printf("║ [!] MEM Forward, 0x%08X -> 0x%08X ║\n", 
+              log[WB_log_itr].instruction, log[EXE_log_itr].instruction);
+              printf("╚═══════════════════════════════════════════╝\n");
+       }
+}
+
+void print_hazard(MIPS32Simulator * sim, char * msg)
+{
+       int EXE_log_itr = sim->EXE_log_itr;
+       int MEM_log_itr = sim->MEM_log_itr;
+       int WB_log_itr = sim->WB_log_itr;
+
+       //   printf("╔═══════════════════════════════════════════╗\n");
+       //        printf("║ [!] EXE Forward, 0x%08X -> 0x%08X ║\n", 
+       //        log[MEM_log_itr].instruction, log[EXE_log_itr].instruction);
+       //        printf("╚═══════════════════════════════════════════╝\n");
+       printf("╔═══════════════════════════════════════════╗\n");
+       printf("║ [!]         %s          ║\n", msg);
+       printf("╚═══════════════════════════════════════════╝\n");
 }
 
 void print_guideline()
 {
-       printf("Press [Any Key] to run\nPress [Q] to stop\n");
+       printf("Press [Any Key] to run\nPress [E] to exit\n");
 }

@@ -1,15 +1,5 @@
 #include "stages.h"
 
-/*
- * all pipeline registers stay at MIPS32Simulator
- * each stage called reversely, wb -> if because of pipeline register not to be overwrited
- * 
- * 
-*/
-
-/*
- * instruction execution
-*/
 void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {    
     // previous stage is off, so off the execute stage
@@ -18,16 +8,6 @@ void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
         sim->ex_on = OFF;
         return;
     }
-    /* no operation? */
-    // if(sim->id_ex_ctrl.ALUOp==OFF && sim->id_ex_ctrl.ALUSrc==OFF && sim->id_ex_ctrl.RegDst==OFF
-    // && sim->id_ex_ctrl.Branch==OFF && sim->id_ex_ctrl.Jump==OFF && sim->id_ex_ctrl.MemRead==OFF 
-    // && sim->id_ex_ctrl.MemtoReg==OFF && sim->id_ex_ctrl.MemWrite==OFF && sim->id_ex_ctrl.RegWrite==OFF)
-    // {
-    //     /* init mem stage control signals */
-    //     sim->ex_mem_ctrl.Branch = OFF; sim->ex_mem_ctrl.Jump = OFF; sim->ex_mem_ctrl.MemRead = OFF;
-    //     sim->ex_mem_ctrl.MemtoReg = OFF; sim->ex_mem_ctrl.MemWrite = OFF; sim->ex_mem_ctrl.RegWrite = OFF;
-    //     return;
-    // }
 
     // read id/ex pipeline register
     int rs_val = sim->id_ex_reg.rs_val;
@@ -91,7 +71,7 @@ void execute(MIPS32Simulator * sim, Log log[MEM_SIZE])
     sim->ex_mem_ctrl.MemtoReg = sim->id_ex_ctrl.MemtoReg;
 
     if(sim->EXE_log_itr < 0) return;
-    // recording the instruction history
+    // recording the execution log
     log[sim->EXE_log_itr].EXE = TRUE;
     log[sim->EXE_log_itr].EXE_clk = sim->clk;
     sim->MEM_log_itr = sim->EXE_log_itr;

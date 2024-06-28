@@ -13,4 +13,6 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE]);
 
 void print_data_memory(MIPS32Simulator * sim);
 
-void print_hazard(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg);
+void print_forwarding(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg);
+
+void print_hazard(MIPS32Simulator * sim, char * msg);

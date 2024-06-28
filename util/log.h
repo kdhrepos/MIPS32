@@ -3,7 +3,7 @@
 #include "../core.h"
 
 typedef struct{
-    int instruction; /* instruction */
+    int instruction; /* instruction in hexcode */
     boolean IF; int IF_clk; /* denotes inst. was executed or not on IF stage and what clock inst. was executed */
     boolean ID; int ID_clk; /* denotes inst. was executed or not on ID stage and what clock inst. was executed */
     boolean EXE; int EXE_clk; /* denotes inst. was executed or not on EXE stage and what clock inst. was executed */

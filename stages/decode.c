@@ -16,7 +16,7 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
         return;
     }
 
-    // get datas from pipeline register
+    // get data from pipeline register
     int inst = sim->if_id_reg.instruction; /* instruction */
     int pc = sim->if_id_reg.pc; /* program counter */
 
@@ -209,25 +209,21 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
         }
     }
 
-    // no operation?
-    // if(inst == 0x00000000)
-    // {
-    //     /* set exe stage control signals */
-    //     sim->id_ex_ctrl.ALUSrc = OFF, sim->id_ex_ctrl.ALUOp = OFF, sim->id_ex_ctrl.RegDst = OFF;
+    // load-use data hazard, no operation
+    if(sim->hzrd_ctrl.pc_write == OFF
+    && sim->hzrd_ctrl.if_id_write == OFF)
+    {
+        // set EX stage control signals off
+        sim->id_ex_ctrl.ALUSrc = OFF; sim->id_ex_ctrl.ALUOp = OFF;
+        sim->id_ex_ctrl.RegDst = OFF;
 
-    //     /* set mem stage control signals */
-    //     sim->id_ex_ctrl.MemRead = OFF, sim->id_ex_ctrl.MemWrite = OFF;
-    //     sim->id_ex_ctrl.Branch = OFF, sim->id_ex_ctrl.Jump = OFF;
+        // set MEM stage control signals off
+        sim->id_ex_ctrl.MemRead = OFF; sim->id_ex_ctrl.MemWrite = OFF;
+        sim->id_ex_ctrl.Branch = OFF; sim->id_ex_ctrl.Jump = OFF;
 
-    //     /* set wb stage control signals */
-    //     sim->id_ex_ctrl.RegWrite = OFF, sim->id_ex_ctrl.MemtoReg = OFF;
-
-    //     /* recording the instruction history */
-    //     log[sim->ID_log_itr].ID = FALSE;
-    //     log[sim->ID_log_itr].ID_clk = sim->clk;
-    //     sim->EXE_log_itr = sim->ID_log_itr;
-    //     return;
-    // }
+        // set WB stage control signals off
+        sim->id_ex_ctrl.RegWrite = OFF; sim->id_ex_ctrl.MemtoReg = OFF;
+    }
 
     if(sim->ID_log_itr < 0) return;
     // recording the execution log
