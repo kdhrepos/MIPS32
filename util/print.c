@@ -90,9 +90,9 @@ void print_log(MIPS32Simulator * sim, Log log[MEM_SIZE])
                      else 
                      {
                             // instruction was started but ain't done,
-                            // but empty clock occurred -> insert bubble
+                            // but empty clock occurred -> insert NOP
                             if(stage_ptr > 0 && stage_ptr < 5)
-                                   printf("bubble");
+                                   printf("  !NOP");
                             else /* print the space */
                                    for(int space = 0; space < 6; space++) printf(" ");
 
@@ -144,19 +144,16 @@ void print_forwarding(MIPS32Simulator * sim, Log log[MEM_SIZE], char * msg)
        }
 }
 
-void print_hazard(MIPS32Simulator * sim, char * msg)
+void print_ld_hazard(MIPS32Simulator * sim, Log log[MEM_SIZE])
 {
+       int IF_log_itr = sim->log_itr;
+       int ID_log_itr = sim->ID_log_itr;
        int EXE_log_itr = sim->EXE_log_itr;
-       int MEM_log_itr = sim->MEM_log_itr;
-       int WB_log_itr = sim->WB_log_itr;
 
-       //   printf("╔═══════════════════════════════════════════╗\n");
-       //        printf("║ [!] EXE Forward, 0x%08X -> 0x%08X ║\n", 
-       //        log[MEM_log_itr].instruction, log[EXE_log_itr].instruction);
-       //        printf("╚═══════════════════════════════════════════╝\n");
-       printf("╔═══════════════════════════════════════════╗\n");
-       printf("║ [!]         %s          ║\n", msg);
-       printf("╚═══════════════════════════════════════════╝\n");
+       printf("╔══════════════════════════════════════════════════════╗\n");
+       printf("║ [!]  Load-use Data Hazard, 0x%08X -> 0x%08X  ║\n", 
+       log[EXE_log_itr].instruction, log[ID_log_itr].instruction);
+       printf("╚══════════════════════════════════════════════════════╝\n");
 }
 
 void print_guideline()

@@ -36,8 +36,6 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
 
     if(opcode == RTYPEOP)
     {
-        printf("R-Type Instruction : \n|%d|%d|%d|%d|%d|%d|\n", opcode, rs, rt, rd, shamt, funct);
-
         // set exe stage control signals
         sim->id_ex_ctrl.ALUSrc = OFF; /* ALUSrc, source register is rt in r-type */
         sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); /* ALUOp */
@@ -67,8 +65,6 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
         // I Type
         if(opcode != J && opcode != JAL)
         {
-            printf("I-Type Instruction : \n|%d|%d|%d|%d|\n", opcode, rs, rt, imm);
-
             /* Branch */
             if(opcode == BEQ || opcode == BNE)
             {
@@ -181,8 +177,6 @@ void decode(MIPS32Simulator * sim, Log log[MEM_SIZE])
         // J Type
         else
         {
-            printf("J-Type Instruction : \n|%d|%d|\n", opcode, addr);
-
             /* set exe stage control signals */
             sim->id_ex_ctrl.ALUSrc = OFF; // ALUSrc, source register is rt on branch
             sim->id_ex_ctrl.ALUOp = get_ALUOp(opcode); // ALUOp, b'??

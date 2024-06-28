@@ -14,7 +14,7 @@ void hazard_detection(MIPS32Simulator * sim, Log log[MEM_SIZE])
         sim->hzrd_ctrl.pc_write = OFF;
         sim->hzrd_ctrl.if_id_write = OFF;
         
-        print_hazard(sim, "Load-use Data Hazard");
+        print_ld_hazard(sim, log);
     }
     else
     {
